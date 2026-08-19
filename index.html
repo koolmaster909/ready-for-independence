@@ -107,6 +107,9 @@ button{font-family:inherit;}
   letter-spacing:.3px;
 }
 .mode-toggle.parent-active{background:var(--amber);border-color:var(--amber);color:var(--navy);}
+.topbar-actions{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+.topbar .brand span.bt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;}
+.lang-toggle{padding:6px 9px;font-size:11px;}
 
 /* Bottom nav */
 .bottomnav{
@@ -661,9 +664,383 @@ const MISSION_POOL = [
   {id:'m6', name:'Solo Navigation', desc:'Plan and complete one solo transit trip', xp:40, cat:'transit', target:1},
 ];
 
+/* ============ i18n ============ */
+const CAT_I18N = {
+  hygiene:{vi:{name:'Vệ Sinh Cá Nhân & Chăm Sóc Bản Thân'}},
+  laundry:{vi:{name:'Giặt Ủi & Chăm Sóc Quần Áo'}},
+  cooking:{vi:{name:'Nấu Ăn Cơ Bản'}},
+  grocery:{vi:{name:'Đi Chợ / Mua Sắm Thực Phẩm'}},
+  budget:{vi:{name:'Ngân Sách & Tài Chính Cá Nhân'}},
+  banking:{vi:{name:'Ngân Hàng & Thanh Toán Điện Tử'}},
+  time:{vi:{name:'Quản Lý Thời Gian'}},
+  academic:{vi:{name:'Lập Kế Hoạch Học Tập'}},
+  transit:{vi:{name:'Phương Tiện Công Cộng'}},
+  travel:{vi:{name:'Kỹ Năng Du Lịch & Di Chuyển Sân Bay'}},
+  dorm:{vi:{name:'Sống Ở Ký Túc Xá / Căn Hộ'}},
+  health:{vi:{name:'Sức Khỏe & Ý Thức Y Tế'}},
+  social:{vi:{name:'Kỹ Năng Giao Tiếp Xã Hội'}},
+  safety:{vi:{name:'An Toàn & Ứng Phó Khẩn Cấp'}},
+  vehicle:{vi:{name:'Kiến Thức Cơ Bản Về Xe Cộ'}},
+  culture:{vi:{name:'Văn Hóa & Đời Sống Mỹ'}},
+};
+
+const LESSON_I18N = {
+  hyg1:{vi:{title:'Thói Quen Vệ Sinh Hằng Ngày',
+    why:"Sẽ không có ai nhắc bạn tắm rửa hay đánh răng khi ở cách nhà 3.000 dặm — đây là nền tảng cho sức khỏe và cách người khác đối xử với bạn.",
+    steps:['Xây dựng thói quen buổi sáng 2 phút: đánh răng, rửa mặt, xịt khử mùi.','Xây dựng thói quen buổi tối 5 phút: đánh răng, dùng chỉ nha khoa, tắm mỗi 1-2 ngày.','Luôn chuẩn bị sẵn túi đồ vệ sinh cá nhân để không bao giờ hết đồ giữa tuần.','Đặt 2 lời nhắc lặp lại trên điện thoại trong tuần đầu, sau đó bỏ đi.'],
+    example:"Chuyện phòng ký túc xá: những bạn nam bỏ tắm nhiều ngày liền sẽ trở thành 'người bạn cùng phòng đó'. Chỉ mất 5 phút để bảo vệ danh tiếng và sức khỏe của bạn.",
+    practice:'Tự thực hiện đầy đủ thói quen sáng + tối trong 5 ngày mà không cần ai nhắc.',
+    challenge:'Tự bổ sung túi đồ vệ sinh trước khi hết — sẽ không ai nói cho bạn biết là nó đã hết.',
+    checklist:['Thực hiện thói quen buổi sáng không cần nhắc x5 ngày','Thực hiện thói quen buổi tối không cần nhắc x5 ngày','Tự bổ sung túi đồ vệ sinh']}},
+  hyg2:{vi:{title:'Chăm Sóc Da & Ngoại Hình Cơ Bản',
+    why:"Mụn, nắng, và không khí khô mùa đông là những 'đối thủ' mới khi bạn tự quản lý da và tóc của mình.",
+    steps:['Tìm hiểu loại da của bạn và chọn 1 sữa rửa mặt + 1 kem dưỡng ẩm.','Biết cách trị mụn mà không lạm dụng sản phẩm.','Tự đặt lịch cắt tóc (gọi điện hoặc qua ứng dụng).','Học cách chăm sóc móng tay và râu/cạo râu cơ bản nếu cần.'],
+    example:'Một bộ sữa rửa mặt + kem dưỡng ẩm giá 9 đô ở hiệu thuốc còn tốt hơn quy trình 10 bước mà bạn sẽ chẳng bao giờ duy trì được.',
+    practice:'Thực hiện quy trình chăm sóc da hằng ngày trong 2 tuần và ghi lại những thay đổi.',
+    challenge:'Tự đặt lịch và đi cắt tóc hoàn toàn một mình, kể cả việc thanh toán/tip.',
+    checklist:['Đã chuẩn bị bộ sản phẩm chăm sóc da','Ghi lại chuỗi 2 tuần duy trì thói quen','Tự đặt lịch và hoàn thành việc cắt tóc']}},
+  lau1:{vi:{title:'Tự Giặt Đồ',
+    why:'Làm hỏng một chiếc áo hoodie 60 đô vì giặt lẫn màu là bài học mà bạn có thể tránh được. Quần áo sạch = sự tự tin và sức khỏe.',
+    steps:['Phân loại theo màu (đồ tối/đồ sáng/đồ mỏng manh) và độ dày vải.','Đọc ký hiệu trên nhãn quần áo trước khi giặt bất cứ món đồ mới nào.','Chọn đúng lượng bột giặt và chế độ/nhiệt độ giặt.','Chạy máy giặt, rồi chuyển đồ sang máy sấy ngay để tránh mùi ẩm mốc.','Sấy đúng mức nhiệt; phơi khô tự nhiên với đồ mỏng manh.','Gấp hoặc treo đồ ngay — đừng để đồ nằm mãi trong giỏ.'],
+    example:'Áo đỏ + tất trắng giặt nước nóng = tất hồng vĩnh viễn. Giặt nước lạnh + tách riêng màu sẽ tránh được lỗi kinh điển này.',
+    practice:'Tự hoàn thành một chu trình giặt đầy đủ: giặt, sấy, gấp, cất đồ.',
+    challenge:'Hoàn thành 3 chu trình giặt đầy đủ trong 3 tuần khác nhau mà không cần ai giúp.',
+    checklist:['Phân loại đồ đúng cách','Đọc to nhãn hướng dẫn giặt/giải thích được nội dung','Hoàn thành chu trình giặt+sấy+gấp+cất đồ','Lặp lại một mình trong 3 tuần liên tiếp']}},
+  lau2:{vi:{title:'Ủi & Gấp Đồ Như Chuyên Gia',
+    why:'Phỏng vấn xin học, thuyết trình ở trường, và ấn tượng đầu tiên cần một chiếc áo không bị nhăn nhúm.',
+    steps:['Chỉnh nhiệt độ bàn ủi phù hợp với loại vải (kiểm tra nhãn).','Ủi áo sơ mi có cổ: cổ áo, vai, tay áo, thân áo.','Học cách gấp áo thun 30 giây và gấp quần.','Biết mẹo không cần ủi: treo trong phòng tắm có hơi nước.'],
+    example:'Một chiếc áo phẳng phiu khi phỏng vấn ở trường thể hiện sự nghiêm túc trước cả khi bạn nói lời nào.',
+    practice:'Ủi một chiếc áo sơ mi có cổ và gấp toàn bộ một ngăn tủ quần áo.',
+    challenge:'Chuẩn bị sẵn cả bộ trang phục (đã ủi + gấp) từ tối hôm trước cho một ngày quan trọng, không cần ai nhắc.',
+    checklist:['Ủi được áo mà không làm cháy vải','Áp dụng cách gấp 30 giây','Chuẩn bị trang phục từ tối hôm trước ít nhất một lần']}},
+  cook1:{vi:{title:'5 Món Ăn Bạn Luôn Có Thể Nấu',
+    why:'Đồ ăn căng-tin sẽ nhanh chán, và đồ ăn ngoài tốn kém với ngân sách sinh viên. Năm món ăn đáng tin cậy = bạn không bao giờ đói hay cháy túi.',
+    steps:['Thành thạo trứng theo 3 cách (chiên khuấy, chiên trứng ốp, trứng cuộn).','Học cách xào một chảo với cơm.','Học cách nấu mì Ý + sốt đóng hũ + đạm.','Học cách nướng gà + rau củ trên khay.','Học cách nấu súp đơn giản hoặc bát ngũ cốc/rau củ.'],
+    example:'Một mẻ xào 6 đô làm được 3 bữa ăn — rẻ và lành mạnh hơn một lần đặt đồ ăn giao tận nơi.',
+    practice:'Nấu từng món trong 5 món một lần, từ nguyên liệu tươi, không mở video hướng dẫn.',
+    challenge:'Nấu đủ bữa tối cho cả tuần (5 tối) cho chính mình, từ danh sách đi chợ do bạn tự lập.',
+    checklist:['Đã nấu cả 5 món cơ bản ít nhất một lần','Có thể kể tên 3 món mà không cần công thức','Hoàn thành một tuần nấu ăn tối tự lên kế hoạch']}},
+  cook2:{vi:{title:'An Toàn Bếp & Dọn Dẹp',
+    why:'Cháy, ngộ độc thực phẩm, và bếp chung bừa bộn đều có thể tránh được với 4-5 thói quen.',
+    steps:['Biết các nguyên tắc an toàn khi dùng dao và nhiệt độ nấu an toàn.','Không bao giờ rời khỏi bếp/lò khi đang nấu.','Dọn dẹp trong lúc nấu — không để dồn thành một đống sau cùng.','Bảo quản đồ ăn thừa an toàn và biết khi nào nên bỏ đi.'],
+    example:'Gà chưa chín kỹ là lỗi phổ biến nhất của người mới — luôn kiểm tra thịt không còn màu hồng và nước chảy ra trong.',
+    practice:'Nấu một bữa ăn đầy đủ và dọn bếp sạch sẽ trong vòng 10 phút sau khi nấu xong.',
+    challenge:"Tổ chức một buổi 'nấu cho ai đó' — mời bạn bè hoặc người thân và tự dọn dẹp một mình.",
+    checklist:['Giải thích được nhiệt độ an toàn cho thịt gà/bò','Nấu ăn không để lại bừa bộn','Đã mời người khác ăn và tự dọn dẹp']}},
+  gro1:{vi:{title:'Lên Kế Hoạch & Đi Chợ Cho Cả Tuần',
+    why:'Đi chợ khi đói bụng mà không có danh sách là cách sinh viên tiêu 80 đô vào đồ ăn vặt mà vẫn chẳng có gì để nấu tối.',
+    steps:['Lên kế hoạch bữa ăn cho cả tuần trước khi đi chợ.','Viết danh sách theo từng khu vực trong siêu thị.','Đặt ngân sách trước khi bước vào cửa hàng.','Mua ở khu vực bên ngoài trước (rau củ, sữa, thịt), rồi mới đến các dãy kệ.'],
+    example:'Danh sách 35 đô có kế hoạch nuôi bạn cả tuần; một chuyến đi chợ không kế hoạch thường tốn hơn mà vẫn thiếu đồ.',
+    practice:'Lên kế hoạch và thực hiện một tuần đi chợ đầy đủ trong ngân sách đã đặt.',
+    challenge:'Đi chợ liên tục 2 tuần, theo dõi chi tiêu thực tế so với ngân sách.',
+    checklist:['Lên kế hoạch bữa ăn trước khi đi chợ','Bám sát danh sách đã viết','Đạt ngân sách 2 tuần liên tiếp']}},
+  gro2:{vi:{title:'Đọc Nhãn & So Sánh Giá',
+    why:'Hàng thương hiệu không phải lúc nào cũng tốt hơn, và nhãn dinh dưỡng giúp bạn ăn uống lành mạnh với ngân sách hạn hẹp.',
+    steps:['So sánh giá trên mỗi đơn vị, không chỉ giá trên nhãn.','Kiểm tra nhãn dinh dưỡng về đạm/đường/muối.','Biết sự khác biệt giữa hàng nhãn riêng của siêu thị và hàng thương hiệu.',"Nhận ra khi nào 'giảm giá' thực ra không phải là ưu đãi tốt."],
+    example:"Hộp lớn hơn với giá trên đơn vị cao hơn là một cái bẫy phổ biến — luôn kiểm tra nhãn giá 'trên mỗi ounce' trên kệ.",
+    practice:'So sánh 5 món hàng theo giá trên đơn vị và chọn lựa chọn thông minh hơn mỗi lần.',
+    challenge:'Giảm 15% chi tiêu chợ hằng tuần chỉ bằng cách so sánh nhãn/giá.',
+    checklist:['Giải thích được cách tính giá trên đơn vị','Đọc đúng 5 nhãn dinh dưỡng','Giảm được 15% chi tiêu trong một tuần']}},
+  bud1:{vi:{title:'Lập Ngân Sách Tháng Đầu Tiên',
+    why:'Tiền sẽ hết rất nhanh khi không ai để ý. Một ngân sách đơn giản nghĩa là bạn quyết định tiền đi đâu, thay vì bất ngờ khi nó biến mất.',
+    steps:['Liệt kê tất cả nguồn thu nhập (trợ cấp, việc làm, quà tặng).','Liệt kê chi phí cố định (điện thoại, gói đăng ký) và chi phí biến đổi (ăn uống, giải trí).','Áp dụng quy tắc 50/30/20 làm khởi điểm: nhu cầu/mong muốn/tiết kiệm.','Theo dõi chi tiêu trong 2 tuần và so sánh với kế hoạch.'],
+    example:'Trợ cấp 200 đô/tháng chia theo 50/30/20 = 100 đô nhu cầu, 60 đô mong muốn, 40 đô tiết kiệm — tự động, không cần đoán.',
+    practice:'Lập một ngân sách thật trong bảng tính hoặc ứng dụng ghi chú với số liệu thực tế của bạn.',
+    challenge:'Theo dõi từng đô la chi tiêu trong một tháng đầy đủ so với ngân sách.',
+    checklist:['Đã lập ngân sách với số liệu thực tế','Hoàn thành theo dõi 2 tuần','Theo dõi cả tháng với sai lệch dưới 10%']}},
+  bud2:{vi:{title:'Khung Quyết Định: Nhu Cầu vs Mong Muốn',
+    why:"Mỗi lần mua sắm là một sự đánh đổi. Biết phân biệt nhu cầu và mong muốn giúp tránh những khoảnh khắc 'tiền của mình đi đâu rồi'.",
+    steps:['Định nghĩa nhu cầu (ăn uống, đi lại, thiết yếu) so với mong muốn (trò chơi, ăn ngoài).','Áp dụng quy tắc chờ 24 giờ trước khi mua đồ không thiết yếu trên 20 đô.','Tự hỏi: điều này giúp mình tiến gần mục tiêu hay chỉ cảm thấy vui trong một ngày?'],
+    example:'Chờ 24 giờ trước khi mua giày mới sẽ loại bỏ được một nửa các quyết định mua sắm bốc đồng.',
+    practice:'Áp dụng quy tắc 24 giờ cho 3 quyết định mua sắm thực tế trong tháng này.',
+    challenge:'Trải qua trọn một tháng không mua sắm bốc đồng nào trên 20 đô.',
+    checklist:['Phân loại đúng 10 món đồ mẫu vào nhu cầu/mong muốn','Áp dụng quy tắc 24 giờ 3 lần','Duy trì một tháng không mua sắm bốc đồng']}},
+  bank1:{vi:{title:'Mở & Quản Lý Tài Khoản Ngân Hàng Mỹ',
+    why:'Bạn sẽ cần tài khoản thanh toán ở Mỹ cho tiền thuê nhà, ăn uống, và cuộc sống hằng ngày — và biết cách thực sự đọc hiểu nó.',
+    steps:['Hiểu sự khác biệt giữa tài khoản thanh toán và tài khoản tiết kiệm.','Học cách đọc sao kê ngân hàng và phát hiện sai sót.','Thiết lập gửi séc qua điện thoại và chuyển khoản.','Hiểu phí thấu chi và cách tránh nó.'],
+    example:"Một lần phí thấu chi có thể lên tới 35 đô — biết số dư thực (không phải 'số dư khả dụng') sẽ giúp tránh điều này.",
+    practice:'Xem một sao kê ngân hàng mẫu và xác định đúng 5 loại giao dịch.',
+    challenge:'Quản lý một tài khoản thật hoặc tài khoản thực hành trong một tháng không phát sinh phí nào.',
+    checklist:['Giải thích được tài khoản thanh toán vs tiết kiệm','Đọc đúng sao kê','Hoàn thành một tháng không phí']}},
+  bank2:{vi:{title:'Thẻ, Ứng Dụng & Tránh Lừa Đảo',
+    why:'Thẻ ghi nợ, Venmo/Zelle, và lừa đảo qua tin nhắn là thực tế hằng ngày — một cú chạm sai có thể tốn tiền thật.',
+    steps:['Biết sự khác biệt giữa thẻ ghi nợ và thẻ tín dụng, và khi nào dùng loại nào.','Thiết lập Venmo/Zelle/Cash App một cách an toàn.','Học cách nhận biết tin nhắn/email lừa đảo yêu cầu mã hoặc thông tin đăng nhập.','Biết phải làm gì ngay khi thẻ bị mất hoặc bị lộ thông tin.'],
+    example:"Một tin nhắn nói 'ngân hàng của bạn cần xác minh' kèm đường link hầu như luôn là lừa đảo — ngân hàng không hỏi theo cách đó.",
+    practice:"Xác định đúng 5 ví dụ 'cảnh báo ngân hàng' thật và giả.",
+    challenge:'Thiết lập và sử dụng an toàn một ứng dụng thanh toán ngang hàng cho một giao dịch thật.',
+    checklist:['Nhận diện đúng cả 5 ví dụ lừa đảo','Thiết lập ứng dụng với mã PIN/sinh trắc học bảo mật','Giải thích được kế hoạch xử lý khi mất thẻ']}},
+  time1:{vi:{title:'Lập Lịch Trình Hằng Tuần',
+    why:"Sẽ không có phụ huynh nào đánh thức bạn dậy hay nhắc bạn học bài. Lịch của bạn trở thành 'phụ huynh' của chính bạn.",
+    steps:['Sắp xếp giờ học/lớp trước, rồi đến việc nhà, rồi đến thời gian giao lưu.','Dùng một ứng dụng lịch cho tất cả mọi thứ — không dùng giấy nhớ rải rác.','Xem lại và làm mới lịch mỗi Chủ nhật.','Dành thời gian dự phòng cho những việc bất ngờ.'],
+    example:"Đặt lịch 'giặt đồ 9-10 giờ tối' như một cuộc hẹn thật sẽ khiến nó thực sự xảy ra.",
+    practice:'Lập và tuân theo một lịch trình tuần đầy đủ trong 7 ngày.',
+    challenge:'Tự vận hành lịch trình của mình trong 3 tuần liên tiếp mà không bỏ lỡ cam kết nào.',
+    checklist:['Lập lịch tuần trong một ứng dụng','Tuân theo trong 7 ngày','Chuỗi 3 tuần không bỏ lỡ việc nào']}},
+  time2:{vi:{title:'Hệ Thống Đánh Bại Trì Hoãn',
+    why:'Deadline chồng chất rất nhanh ở một đất nước mới khi không ai kiểm tra bài tập của bạn.',
+    steps:['Chia nhỏ việc lớn thành các khối tập trung 25 phút (Pomodoro).','Làm việc khó nhất trước, không để đến cuối.','Loại bỏ xao nhãng từ điện thoại trong lúc tập trung.','Tự thưởng cho bản thân sau khi hoàn thành, không phải trước.'],
+    example:"'Bài luận 3 trang' nghe có vẻ bất khả thi; 'một đoạn văn, 25 phút' nghe khả thi — và đó là cùng một việc.",
+    practice:'Áp dụng phương pháp Pomodoro cho 5 buổi học.',
+    challenge:'Hoàn thành một bài tập thật trước hạn chót 2 ngày tròn.',
+    checklist:['Ghi lại 5 buổi Pomodoro','Giải thích được nguyên tắc làm việc khó nhất trước','Hoàn thành một việc sớm 2 ngày']}},
+  aca1:{vi:{title:'Theo Dõi Bài Tập & Hạn Chót',
+    why:'Trường học ở Mỹ mong đợi bạn tự theo dõi — sẽ không ai gọi về nhà báo bài tập bị thiếu như một số trường khác.',
+    steps:['Thiết lập một công cụ theo dõi duy nhất: ứng dụng lịch hoặc sổ tay, không dùng cả hai.','Ghi lại mọi bài tập ngay ngày được giao, kèm hạn nộp.','Kiểm tra công cụ theo dõi mỗi ngày, cùng một giờ.','Đánh dấu bất cứ việc gì đến hạn trong 48 giờ tới.'],
+    example:'Tuần đầu học kỳ (syllabus week) là lúc hầu hết các hạn chót bị bỏ lỡ bắt đầu — ghi lại mọi thứ ngay ngày đầu tiên.',
+    practice:'Theo dõi một tuần bài tập thật trên tất cả các môn học.',
+    challenge:'Trải qua trọn một kỳ chấm điểm không bỏ lỡ hạn chót nào.',
+    checklist:['Đã thiết lập công cụ theo dõi','Ghi chép chính xác một tuần đầy đủ','Không bỏ lỡ hạn chót nào trong một học kỳ']}},
+  aca2:{vi:{title:'Hệ Thống Học Tập Hiệu Quả',
+    why:"'Học một lúc' không phải là một hệ thống — gợi nhớ chủ động và giãn cách ôn tập mới thực sự hiệu quả.",
+    steps:['Dùng gợi nhớ chủ động (tự kiểm tra) thay vì đọc lại ghi chú.','Giãn cách các buổi ôn tập qua nhiều ngày, không nhồi nhét một đêm.','Tìm một chỗ học không bị xao nhãng trong khuôn viên trường.','Hỏi giáo viên/trợ giảng khi bí, đừng chỉ đoán.'],
+    example:'Đọc lại một chương cảm giác như hiệu quả nhưng kết quả kiểm tra lại kém hơn so với gấp sách lại và tự kiểm tra.',
+    practice:'Dùng gợi nhớ chủ động để ôn cho một bài kiểm tra thật.',
+    challenge:'Áp dụng ôn tập giãn cách suốt một tuần trước một bài kiểm tra lớn — và theo dõi kết quả điểm số.',
+    checklist:['Giải thích được gợi nhớ chủ động vs đọc lại','Áp dụng cho một bài kiểm tra thật','Chủ động hỏi giáo viên một câu hỏi làm rõ']}},
+  tra1:{vi:{title:'Đọc Bản Đồ & Ứng Dụng Giao Thông Công Cộng',
+    why:'Không có tài xế gia đình ở Mỹ — xe buýt, tàu điện, và ứng dụng đặt xe là cách bạn di chuyển khắp nơi.',
+    steps:['Cài đặt và thiết lập một ứng dụng giao thông (Google/Apple Maps hoặc ứng dụng địa phương).','Học cách đọc bản đồ tuyến đường và điểm chuyển tuyến.','Hiểu về thẻ/vé và cách nạp tiền.','Lên kế hoạch chuyến đi với tuyến dự phòng phòng khi trễ.'],
+    example:'Lỡ một chuyến xe buýt không nên làm hỏng cả ngày của bạn — luôn biết giờ khởi hành tiếp theo.',
+    practice:'Lên kế hoạch một tuyến đi thật có nhiều điểm dừng bằng ứng dụng.',
+    challenge:'Tự đi phương tiện công cộng đến một nơi mới, một mình, không cần trợ giúp.',
+    checklist:['Đã thiết lập ứng dụng giao thông','Lên kế hoạch tuyến đi có phương án dự phòng','Hoàn thành một chuyến đi tuyến mới một mình']}},
+  tra2:{vi:{title:'Tự Tin Di Chuyển Một Mình',
+    why:'Di chuyển một mình ở một thành phố lạ cần sự tinh ý, không chỉ cần chỉ đường.',
+    steps:['Ngồi gần tài xế hoặc ở toa đông người vào giờ vắng.','Giữ đồ có giá trị không lộ ra ngoài; biết điểm dừng của mình trước khi lên xe.','Biết phải làm gì nếu lỡ điểm dừng hoặc bị lạc.','Lưu số liên lạc khẩn cấp và bản đồ ngoại tuyến cho khu vực không có sóng.'],
+    example:'Tải bản đồ ngoại tuyến trước chuyến đi sẽ cứu bạn khi điện thoại mất sóng dưới lòng đất.',
+    practice:'Đi phương tiện công cộng vào giờ đông và giờ vắng, ghi nhận sự khác biệt trong cách xử lý.',
+    challenge:'Xử lý một tình huống đổi tuyến ngoài kế hoạch (lỡ điểm dừng, trễ chuyến) và tự khắc phục mà không hoảng loạn hay gọi về nhà trước.',
+    checklist:['Thể hiện được thói quen an toàn','Đã lưu bản đồ ngoại tuyến','Tự xử lý được một tình huống đổi tuyến thật']}},
+  trv1:{vi:{title:'Đóng Gói & Chuẩn Bị Cho Chuyến Bay',
+    why:'Bạn sẽ bay quốc tế một mình — sai sót khi đóng gói và chuẩn bị có thể tốn kém hoặc gây căng thẳng.',
+    steps:['Kiểm tra giới hạn cân nặng/kích thước hành lý trước khi đóng gói.','Đóng gói hành lý xách tay thông minh: giấy tờ, sạc, một bộ quần áo thay.','Check-in online và chụp/in vé lên máy bay.','Nắm chắc yêu cầu về hộ chiếu/visa.'],
+    example:'Hành lý xách tay có bộ quần áo thay sẽ cứu bạn nếu hành lý ký gửi bị trễ.',
+    practice:'Đóng gói đầy đủ hành lý xách tay + hành lý ký gửi trong giới hạn của hãng bay cho một chuyến đi thử.',
+    challenge:'Tự hoàn thành toàn bộ khâu chuẩn bị trước chuyến bay thật (check-in, giấy tờ, đóng gói) một mình.',
+    checklist:['Đóng gói trong giới hạn cân nặng/kích thước','Tự check-in độc lập','Kiểm tra đầy đủ giấy tờ trước ngày đi']}},
+  trv2:{vi:{title:'Tự Di Chuyển Trong Sân Bay',
+    why:'Sân bay lớn ở Mỹ gây rối ngay cả trong ngày bình thường — bạn cần một hệ thống bình tĩnh, không phải may mắn.',
+    steps:['Đến sớm với thời gian dự phòng hợp lý (2-3 giờ cho chuyến quốc tế).','Nắm rõ quy trình an ninh: chất lỏng, laptop, quy định giày dép.','Đọc bảng chỉ dẫn cổng/nhà ga và thông báo từ ứng dụng khi có thay đổi.','Biết phải làm gì nếu chuyến bay trễ hoặc đổi cổng.'],
+    example:'Đổi cổng 30 phút trước khi lên máy bay là chuyện bình thường — hãy kiểm tra bảng thông báo, đừng chỉ tin vào vé ban đầu.',
+    practice:'Đi qua một kịch bản mô phỏng cả ngày ở sân bay và xác định từng bước.',
+    challenge:'Tự di chuyển hoàn toàn độc lập cho một chuyến bay thật (nội địa hoặc quốc tế).',
+    checklist:['Giải thích đúng quy trình chuẩn bị an ninh','Xử lý được tình huống mô phỏng đổi cổng','Hoàn thành một chuyến bay thật một mình']}},
+  dorm1:{vi:{title:'Sắp Xếp Phòng Ký Túc Xá',
+    why:'Phòng của bạn là căn cứ hoạt động — sắp xếp gọn gàng ngay từ đầu nghĩa là bớt căng thẳng cả năm.',
+    steps:['Lập danh sách kiểm tra khi chuyển vào (chăn ga, đồ lưu trữ, dụng cụ cơ bản).','Thiết lập lịch dọn dẹp cho không gian nhỏ.','Nắm rõ quy định của tòa nhà (giờ yên tĩnh, khách, an toàn cháy nổ).','Học cách xử lý sự cố cơ bản: khởi động lại wifi, cầu dao điện, yêu cầu bảo trì.'],
+    example:'Gửi yêu cầu bảo trì đúng cách (không phải nhắn tin nhờ bạn bè sửa) giúp việc được xử lý nhanh.',
+    practice:'Sắp xếp và duy trì một không gian gọn gàng trong 2 tuần.',
+    challenge:'Gửi một yêu cầu bảo trì/cơ sở vật chất thật và theo dõi đến khi được xử lý.',
+    checklist:['Hoàn thành danh sách kiểm tra khi chuyển vào','Tuân theo lịch dọn dẹp 2 tuần','Xử lý được một vấn đề bảo trì thật']}},
+  dorm2:{vi:{title:'Sống Chung Với Bạn Cùng Phòng',
+    why:'Chia sẻ không gian với người lạ là một trong những nguồn căng thẳng lớn nhất của sinh viên — và là kỹ năng bạn có thể luyện tập ngay bây giờ.',
+    steps:['Thống nhất kỳ vọng chung ngay từ đầu (việc nhà, khách, tiếng ồn, giờ yên tĩnh).','Luyện tập trò chuyện trực tiếp, bình tĩnh khi có mâu thuẫn, không dùng ghi chú mỉa mai.','Chia đều chi phí và việc nhà chung, có theo dõi.','Biết khi nào nên nhờ RA/người hòa giải thay vì tự xử lý.'],
+    example:"'Này, chúng ta thống nhất giờ yên tĩnh sau 11 giờ nhé?' tốt hơn nhiều so với âm thầm bực bội cả tháng.",
+    practice:'Có một cuộc trò chuyện thật kiểu bạn cùng phòng (với anh chị em, bạn bè, hoặc phụ huynh đóng vai) về kỳ vọng chung.',
+    challenge:'Giải quyết một bất đồng thật về không gian chung một cách bình tĩnh và trực tiếp.',
+    checklist:['Đã luyện tập cuộc trò chuyện thiết lập ranh giới','Chia đều một chi phí/việc nhà chung','Giải quyết một mâu thuẫn thật mà không leo thang']}},
+  hea1:{vi:{title:'Đặt Lịch & Đi Khám Bác Sĩ',
+    why:'Không có phụ huynh gọi phòng khám giúp — bạn cần tự mô tả triệu chứng và quản lý việc chăm sóc của mình.',
+    steps:['Biết thông tin thẻ bảo hiểm và cách tìm bác sĩ trong mạng lưới.','Gọi/đặt lịch hẹn và mô tả triệu chứng rõ ràng.','Nắm rõ tiền sử bệnh: dị ứng, thuốc đang dùng, bệnh trước đây.','Đặt câu hỏi và hiểu rõ hướng dẫn trước khi ra về.'],
+    example:"'Đau' thôi là chưa đủ — 'đau nhói, bên phải phía dưới, bắt đầu 2 ngày trước' giúp bạn được chăm sóc tốt hơn.",
+    practice:'Đóng vai đặt lịch hẹn và mô tả một triệu chứng rõ ràng.',
+    challenge:'Tự đặt lịch và đi khám thật (khám tổng quát, nha sĩ, v.v.) tự quản lý toàn bộ giao tiếp.',
+    checklist:['Ghi nhớ/lưu thông tin bảo hiểm','Hoàn thành đóng vai luyện tập','Tự quản lý một buổi khám thật']}},
+  hea2:{vi:{title:'Xử Lý Bệnh Nhẹ Hoặc Chấn Thương Nhỏ',
+    why:'Cảm lạnh, vết cắt, hay đau bụng không nên trở thành khủng hoảng khi bạn ở một mình.',
+    steps:['Chuẩn bị sẵn bộ sơ cứu + thuốc cơ bản.','Biết liều dùng thuốc không kê đơn an toàn và khi nào nên đi khám thay vì nghỉ ngơi.',"Biết ranh giới giữa phòng khám cấp cứu vs phòng cấp cứu vs 'chỉ cần nghỉ ngơi'.",'Lưu sẵn số khẩn cấp và thông tin trung tâm y tế sinh viên.'],
+    example:"Sốt 101°F kèm nghỉ ngơi và uống nước khác với sốt 104°F — biết ranh giới nào nghĩa là 'cần giúp đỡ ngay'.",
+    practice:'Chuẩn bị một bộ sơ cứu và giải thích khi nào dùng từng món.',
+    challenge:'Tự xử lý trọn vẹn một tình huống bệnh nhẹ/chấn thương nhỏ thật với quyết định tự chăm sóc đúng đắn.',
+    checklist:['Đã chuẩn bị và giải thích được bộ dụng cụ','Vượt qua bài kiểm tra quyết định tình huống','Tự xử lý đúng một tình huống thật']}},
+  soc1:{vi:{title:'Trò Chuyện Xã Giao & Kết Bạn',
+    why:'Trường mới, đất nước mới, không có sẵn nhóm bạn — kỹ năng xã hội là cách nhanh nhất để cảm thấy như ở nhà.',
+    steps:['Học 5 câu mở đầu trò chuyện dễ dàng với người mới.','Luyện tập lắng nghe chủ động: hỏi thêm, không chỉ chờ đến lượt mình nói.','Tham gia một câu lạc bộ/hoạt động trong tháng đầu để nhanh chóng gặp gỡ mọi người.','Chủ động liên lạc lại với người bạn đã gặp — rủ rê, đừng chỉ chờ đợi.'],
+    example:"'Điều gì khiến bạn chọn trường này?' mở ra một cuộc trò chuyện thật hơn nhiều so với chỉ nói 'chào'.",
+    practice:'Bắt chuyện với 3 người mới trong tuần này và ghi lại điều gì hiệu quả.',
+    challenge:'Tham gia một câu lạc bộ hoặc hoạt động nhóm và tham dự 3 buổi.',
+    checklist:['Dùng 3 câu mở đầu với người thật','Tham gia một hoạt động','Tham dự 3 buổi']}},
+  soc2:{vi:{title:'Tự Tin Nhờ Giúp Đỡ',
+    why:'Quá tự ái để nhờ giúp đỡ là nguyên nhân số 1 khiến du học sinh cô lập.',
+    steps:['Xác định nên hỏi ai: giáo viên, RA, cố vấn, bạn cùng lớp.',"Luyện tập cách hỏi rõ ràng, cụ thể (không mơ hồ kiểu 'em đang gặp khó khăn').",'Theo dõi lại bằng một lời cảm ơn — điều này xây dựng mối quan hệ.','Biết rằng việc hỏi là bình thường và được khuyến khích; văn hóa Mỹ đánh giá cao điều đó.'],
+    example:"'Thầy/cô có thể giải thích rõ hơn câu 3 không ạ? Em không chắc câu này hỏi gì' sẽ nhận được câu trả lời nhanh và hữu ích.",
+    practice:'Hỏi một câu hỏi thật, cụ thể với giáo viên hoặc cố vấn trong tuần này.',
+    challenge:"Nhờ giúp đỡ về một điều mà bình thường bạn sẽ tránh hỏi (học tập, xã hội, hoặc hậu cần).",
+    checklist:['Xác định đúng người nên hỏi 3 lần','Đặt một câu hỏi cụ thể',"Hoàn thành một việc từng 'né tránh'"]}},
+  saf1:{vi:{title:'Danh Bạ Khẩn Cấp & Kế Hoạch Ứng Phó',
+    why:'Trong tình huống khẩn cấp, bạn sẽ không có thời gian để suy nghĩ — kế hoạch phải đã có sẵn.',
+    steps:['Lưu số liên lạc khẩn cấp (ICE) trên màn hình khóa điện thoại.','Biết số an ninh/khẩn cấp của trường, không chỉ số 911.','Chia sẻ vị trí với người tin cậy khi di chuyển.','Biết kế hoạch phòng cháy chữa cháy và sơ tán của ký túc xá/tòa nhà.'],
+    example:'Thông tin y tế trên màn hình khóa giúp nhân viên cấp cứu biết dị ứng của bạn ngay cả khi điện thoại đang khóa.',
+    practice:'Thiết lập số liên lạc khẩn cấp và ID y tế trên điện thoại.',
+    challenge:'Tự đi thử tuyến đường sơ tán và tính thời gian.',
+    checklist:['Đã thiết lập số liên lạc khẩn cấp','Đã thiết lập chia sẻ vị trí','Đã đi thử và tính thời gian tuyến sơ tán']}},
+  saf2:{vi:{title:'Xử Lý Bị Khóa Ngoài, Lừa Đảo, Hoặc Tai Nạn',
+    why:'Những sự cố nhỏ này cuối cùng sẽ xảy ra với ai cũng vậy — hoảng loạn khiến mọi thứ tệ hơn, có kế hoạch khiến nó trở thành chuyện nhỏ.',
+    steps:['Biết nên gọi ai khi bị khóa ngoài (RA, chủ nhà, thợ khóa).','Nhận diện các trò lừa đảo phổ biến nhắm vào sinh viên (giả danh quan chức, ưu đãi quá tốt để tin).','Biết các bước cơ bản khi có tai nạn: an toàn trước, rồi ghi lại, rồi báo cáo.','Luôn có sẵn một quỹ khẩn cấp nhỏ cho đúng những lúc thế này.'],
+    example:"Người gọi tự xưng là 'cơ quan di trú' đòi thanh toán bằng thẻ quà tặng luôn luôn là lừa đảo — cúp máy, tự xác minh độc lập.",
+    practice:'Đóng vai 2 tình huống lừa đảo và nhận diện đúng các dấu hiệu cảnh báo.',
+    challenge:'Tự xử lý một sự cố nhỏ thật (bị khóa ngoài, mất đồ, v.v.) theo kế hoạch mà không hoảng loạn hay gọi về nhà trước.',
+    checklist:['Nhận diện đúng 2 tình huống lừa đảo','Đã có sẵn quỹ khẩn cấp','Tự xử lý được một sự cố nhỏ thật']}},
+  veh1:{vi:{title:'Đặt Xe & Kiến Thức Cơ Bản Về Ô Tô',
+    why:'Dù không có bằng lái, bạn vẫn sẽ dùng xe đặt qua ứng dụng và ô tô thường xuyên — hãy biết cách giữ an toàn và thông minh.',
+    steps:['Xác minh tài xế/biển số trùng khớp trước khi lên xe.','Chia sẻ trạng thái chuyến đi với bạn bè/người thân.','Luôn có thói quen thắt dây an toàn, không có ngoại lệ.','Hiểu chi phí ước tính để lên ngân sách cho việc đi lại.'],
+    example:"Hỏi 'tên tôi là gì?' trước khi lên xe giúp xác nhận bạn đang lên đúng xe, không phải xe giả mạo.",
+    practice:'Đặt một chuyến xe thật hoặc thử nghiệm và thực hiện các bước xác minh thành tiếng.',
+    challenge:'Tự thực hiện 3 chuyến đi bằng xe đặt qua ứng dụng, chia sẻ trạng thái chuyến đi mỗi lần.',
+    checklist:['Thể hiện được thói quen xác minh','Đã thiết lập chia sẻ chuyến đi','Hoàn thành 3 chuyến đi độc lập']}},
+  veh2:{vi:{title:'Phải Làm Gì Nếu Bạn Là Hành Khách Trong Tai Nạn',
+    why:'Hiếm khi xảy ra, nhưng biết các bước sẽ loại bỏ sự hoảng loạn nếu điều đó thật sự xảy ra.',
+    steps:['Kiểm tra bản thân và người khác xem có bị thương không trước tiên.','Di chuyển đến nơi an toàn nếu có thể; gọi 911 nếu cần.','Trao đổi thông tin nếu phù hợp và chụp ảnh hiện trường.','Gọi cho người tin cậy và theo dõi với trường/bảo hiểm nếu liên quan.'],
+    example:'Chụp ảnh hiện trường trước khi mọi thứ bị di chuyển sẽ bảo vệ bạn sau này — luôn ghi lại trước tiên.',
+    practice:'Nói to các bước xử lý tai nạn cho đến khi bạn có thể nhớ thuộc lòng.',
+    challenge:'Dạy lại các bước này cho phụ huynh hoặc bạn bè mà không cần nhìn ghi chú.',
+    checklist:['Đọc thuộc lòng các bước từ trí nhớ','Giải thích được bước chụp ảnh/ghi lại','Dạy lại quy trình cho người khác']}},
+  cul1:{vi:{title:'Chuẩn Mực Trong Lớp Học & Xã Hội',
+    why:'Việc phát biểu trong lớp, mối quan hệ thoải mái với giáo viên, và sự thẳng thắn khác với những gì bạn quen — hiểu chuẩn mực giúp tránh những bất ngờ khó xử.',
+    steps:["Hiểu rằng việc tham gia phát biểu trong lớp thường được tính điểm — im lặng không phải lúc nào cũng là 'tôn trọng', mà có thể bị coi là thiếu tham gia.",'Học cách xưng hô phù hợp với giáo viên (thường gọi tên riêng trong một số môi trường).',"Hiểu về khoảng cách cá nhân và lời chào thông thường (đập tay, 'khỏe không').",'Học chuẩn mực trung thực học thuật — quy định trích dẫn và đạo văn rất nghiêm ngặt.'],
+    example:'Giơ tay để tôn trọng phản biện ý kiến của giáo viên là điều bình thường và thường được đánh giá cao trong lớp học ở Mỹ.',
+    practice:'Luyện tập phát biểu ít nhất một lần trong buổi nhóm/lớp học tuần này.',
+    challenge:'Đóng góp một ý kiến hoặc câu hỏi thật trong thảo luận lớp mà không cần được gọi tên trước.',
+    checklist:['Giải thích được chuẩn mực tham gia phát biểu','Đã luyện tập phát biểu một lần','Đóng góp không cần được gọi trong một lớp học thật']}},
+  cul2:{vi:{title:'Tiền Tip, Trò Chuyện Xã Giao & Phép Lịch Sự',
+    why:'Sai sót khi tip và những lỗi nhỏ về phép lịch sự là cách nhanh nhất khiến bạn cảm thấy như người ngoài cuộc — vài quy tắc sẽ khắc phục hầu hết.',
+    steps:['Học mức tip tiêu chuẩn (nhà hàng ~18-20%, đặt xe, giao hàng).',"Luyện tập trò chuyện xã giao kiểu 'dạo này thế nào' — trả lời ngắn gọn, không phải báo cáo đầy đủ.",'Học phép lịch sự khi xếp hàng và chuẩn mực khoảng cách cá nhân.','Hiểu phong cách giao tiếp trực tiếp so với gián tiếp — người Mỹ thường nói thẳng điều họ muốn nói.'],
+    example:"'Dạo này thế nào?' thường chỉ mong đợi câu trả lời 'tốt, còn bạn?' — không phải một báo cáo tình hình thật sự.",
+    practice:'Tính đúng tiền tip cho 3 hóa đơn nhà hàng mẫu.',
+    challenge:'Tự xử lý đúng một tình huống tip thật ở nhà hàng hoặc dịch vụ.',
+    checklist:['Tính đúng cả 3 tình huống tip','Đã luyện tập trò chuyện xã giao','Xử lý đúng một tình huống tip thật']}},
+};
+
+const MISSION_I18N = {
+  m1:{vi:{name:'Tuần Giặt Đồ', desc:'Hoàn thành 2 chu trình giặt đầy đủ trong tuần này'}},
+  m2:{vi:{name:'Kiểm Tra Ngân Sách', desc:'Ghi lại mọi khoản chi trong 5 ngày liên tiếp'}},
+  m3:{vi:{name:'Nấu 3 Bữa Tối', desc:'Tự nấu bữa tối từ đầu 3 tối trong tuần này'}},
+  m4:{vi:{name:'Chuỗi Giao Tiếp', desc:'Bắt chuyện với người mới 3 lần'}},
+  m5:{vi:{name:'Khối Thời Gian Học', desc:'Hoàn thành 5 buổi học tập trung Pomodoro'}},
+  m6:{vi:{name:'Tự Di Chuyển', desc:'Lên kế hoạch và hoàn thành một chuyến đi phương tiện công cộng một mình'}},
+};
+
+const BADGE_I18N = {
+  streak7:{vi:{name:'Chuỗi 7 Ngày'}},
+  score50:{vi:{name:'Đã Đi Được Nửa Đường'}},
+  score80:{vi:{name:'Tinh Anh Độc Lập'}},
+  firstlesson:{vi:{name:'Bước Đầu Tiên'}},
+  mission1:{vi:{name:'Hoàn Thành Nhiệm Vụ'}},
+};
+
+const ROADMAP_I18N = [
+  {en:{when:'Aug 2026 · Now', what:'Program Start — Fundamentals', detail:'Daily routines, hygiene, laundry, cooking basics, first budget, time management systems.'},
+   vi:{when:'Tháng 8/2026 · Hiện tại', what:'Bắt Đầu Chương Trình — Nền Tảng', detail:'Thói quen hằng ngày, vệ sinh, giặt đồ, nấu ăn cơ bản, ngân sách đầu tiên, hệ thống quản lý thời gian.'}},
+  {en:{when:'Jan 2027', what:'Mid Year 1 Checkpoint', detail:'Independent routines running solo. Target: 40%+ Independence Score.'},
+   vi:{when:'Tháng 1/2027', what:'Điểm Kiểm Tra Giữa Năm 1', detail:'Thói quen tự lập đã vận hành trơn tru. Mục tiêu: Điểm Độc Lập 40%+.'}},
+  {en:{when:'Aug 2027', what:'Year 2 Begins — Independent Living', detail:'Travel, dorm life, healthcare, transit, safety, culture prep begin.'},
+   vi:{when:'Tháng 8/2027', what:'Năm 2 Bắt Đầu — Sống Tự Lập', detail:'Bắt đầu chuẩn bị du lịch, sống ký túc xá, chăm sóc sức khỏe, giao thông, an toàn, văn hóa.'}},
+  {en:{when:'Mar 2028', what:'Pre-Departure Readiness Review', detail:'Full skills audit with parents. Target: 80%+ Independence Score.'},
+   vi:{when:'Tháng 3/2028', what:'Đánh Giá Sẵn Sàng Trước Khi Đi', detail:'Rà soát toàn bộ kỹ năng cùng phụ huynh. Mục tiêu: Điểm Độc Lập 80%+.'}},
+  {en:{when:'Summer 2028', what:'Departure — 9th Grade in the US', detail:'Final packing, travel day walkthrough, airport navigation solo run.'},
+   vi:{when:'Mùa Hè 2028', what:'Lên Đường — Vào Lớp 9 Tại Mỹ', detail:'Đóng gói lần cuối, mô phỏng ngày di chuyển, tự đi qua sân bay.'}},
+];
+
+const UI = {
+  en:{
+    switchToParent:'Switch to Parent', parentModeLabel:'👨‍👩‍👦 Parent Mode',
+    navHome:'Home', navAcademy:'Academy', navMissions:'Missions', navCoach:'Coach', navProfile:'Profile',
+    welcomeBack:'Welcome back,', totalLabel:'Total', dayStreakLabel:'Day Streak',
+    independenceScoreTitle:'Independence Score',
+    independenceScoreDesc:'Rises as parent-verified skills are completed across all 16 categories.',
+    levelWord:'Level', continueLearning:'Continue Learning', thisWeeksMissions:"This Week's Missions",
+    coachTip:'Coach Tip', askCoachMore:'Ask Coach More →',
+    lifeSkillsAcademy:'Life Skills Academy', year1:'Year 1 — Fundamentals', year2:'Year 2 — Independent Living',
+    lessonsTitle:'Lessons', awaitingApproval:' · awaiting parent approval',
+    whyItMatters:'Why It Matters', stepByStep:'Step-by-Step', realExample:'Real Example',
+    practiceExercise:'Practice Exercise', realWorldChallenge:'Real-World Challenge', completionChecklist:'Completion Checklist',
+    skillMastered:'✓ Skill mastered — nice work.', waitingVerification:'⏳ Waiting on parent verification in Parent Mode.',
+    submitForVerification:'Submit for Parent Verification',
+    completedSuffix:' · ✓ Completed', pendingSuffix:' · ⏳ Pending parent verification',
+    missionsStreaksTitle:'Missions & Streaks', currentStreak:'Current Streak', badgesLabel:'Badges',
+    activeWeeklyMissions:'Active Weekly Missions', badgeCase:'Badge Case',
+    coachTitle:'Coach', askCoachPlaceholder:'Ask Coach anything...',
+    profileTitle:'Profile', masteryByCategory:'Mastery by Category', twoYearRoadmap:'Two-Year Roadmap',
+    settingsTitle:'Settings', profileNameLabel:'Profile Name', enterNamePlaceholder:'Enter name', saveNameBtn:'Save Name',
+    switchKidNote:'Switching this app to a different kid? Change the name here, then use Reset All Progress below for a clean slate — otherwise XP, badges, and streak carry over.',
+    resetAllProgress:'Reset All Progress',
+    parentDashboardTitle:'Parent Dashboard', independenceScoreShort:'Independence Score', streakShort:'Streak',
+    allCaughtUp:'Nothing waiting — all caught up.', strengthsGaps:'Strengths & Gaps',
+    topStrengths:'TOP STRENGTHS', needsAttention:'NEEDS ATTENTION',
+    assignChallengeTitle:'Assign a Challenge', categoryLabel:'Category', noteOptional:'Note (optional)',
+    notePlaceholder:'e.g. Do this before Saturday', assignChallengeBtn:'Assign Challenge',
+    milestonesTitle:'Milestones', newMilestonePlaceholder:'New milestone...', addBtn:'Add',
+    fullCategoryOverview:'Full Category Overview', targetWord:'target',
+    installTipIOS:'For the full app experience: tap the Share icon, then', addToHomeScreen:'Add to Home Screen',
+    installTipOther:'Tap your browser menu → Add to Home Screen for the full app experience',
+    gotIt:'Got it', resetConfirm:'Reset all progress, XP, badges and streaks? This cannot be undone.',
+    yearWord:'Year', doneWord:'done', tierRookie:'Rookie', tierApprentice:'Apprentice', tierOperator:'Operator', tierIndependent:'Independent', tierMaster:'Master',
+    masterSuffix:' Master', appTitle:'Ready for Independence',
+  },
+  vi:{
+    switchToParent:'Chuyển sang Phụ huynh', parentModeLabel:'👨‍👩‍👦 Chế độ Phụ huynh',
+    navHome:'Trang chủ', navAcademy:'Học viện', navMissions:'Nhiệm vụ', navCoach:'Huấn luyện viên', navProfile:'Hồ sơ',
+    welcomeBack:'Chào mừng trở lại,', totalLabel:'Tổng', dayStreakLabel:'Chuỗi ngày',
+    independenceScoreTitle:'Điểm Độc Lập',
+    independenceScoreDesc:'Tăng lên khi các kỹ năng được phụ huynh xác nhận hoàn thành trên cả 16 nhóm kỹ năng.',
+    levelWord:'Cấp độ', continueLearning:'Tiếp tục học', thisWeeksMissions:'Nhiệm vụ tuần này',
+    coachTip:'Gợi ý từ Huấn luyện viên', askCoachMore:'Hỏi thêm Huấn luyện viên →',
+    lifeSkillsAcademy:'Học viện Kỹ năng Sống', year1:'Năm 1 — Nền tảng', year2:'Năm 2 — Sống tự lập',
+    lessonsTitle:'Bài học', awaitingApproval:' · đang chờ phụ huynh duyệt',
+    whyItMatters:'Vì Sao Điều Này Quan Trọng', stepByStep:'Từng Bước Một', realExample:'Ví Dụ Thực Tế',
+    practiceExercise:'Bài Tập Thực Hành', realWorldChallenge:'Thử Thách Thực Tế', completionChecklist:'Danh Sách Hoàn Thành',
+    skillMastered:'✓ Đã thành thạo kỹ năng — làm tốt lắm.', waitingVerification:'⏳ Đang chờ phụ huynh xác nhận trong Chế độ Phụ huynh.',
+    submitForVerification:'Gửi cho Phụ huynh Xác nhận',
+    completedSuffix:' · ✓ Đã hoàn thành', pendingSuffix:' · ⏳ Đang chờ phụ huynh xác nhận',
+    missionsStreaksTitle:'Nhiệm vụ & Chuỗi ngày', currentStreak:'Chuỗi ngày hiện tại', badgesLabel:'Huy hiệu',
+    activeWeeklyMissions:'Nhiệm vụ tuần đang hoạt động', badgeCase:'Bộ sưu tập Huy hiệu',
+    coachTitle:'Huấn luyện viên', askCoachPlaceholder:'Hỏi Huấn luyện viên bất cứ điều gì...',
+    profileTitle:'Hồ sơ', masteryByCategory:'Mức độ thành thạo theo nhóm kỹ năng', twoYearRoadmap:'Lộ trình 2 năm',
+    settingsTitle:'Cài đặt', profileNameLabel:'Tên hồ sơ', enterNamePlaceholder:'Nhập tên', saveNameBtn:'Lưu tên',
+    switchKidNote:'Chuyển ứng dụng này sang dùng cho bé khác? Đổi tên tại đây, sau đó bấm Đặt lại toàn bộ tiến trình bên dưới để bắt đầu sạch sẽ — nếu không XP, huy hiệu và chuỗi ngày sẽ được giữ lại.',
+    resetAllProgress:'Đặt lại toàn bộ tiến trình',
+    parentDashboardTitle:'Bảng điều khiển Phụ huynh', independenceScoreShort:'Điểm Độc Lập', streakShort:'Chuỗi ngày',
+    allCaughtUp:'Không có gì đang chờ — đã xử lý hết.', strengthsGaps:'Điểm mạnh & Khoảng trống',
+    topStrengths:'ĐIỂM MẠNH NHẤT', needsAttention:'CẦN CHÚ Ý',
+    assignChallengeTitle:'Giao Thử Thách', categoryLabel:'Nhóm kỹ năng', noteOptional:'Ghi chú (không bắt buộc)',
+    notePlaceholder:'vd: Hoàn thành trước thứ Bảy', assignChallengeBtn:'Giao thử thách',
+    milestonesTitle:'Cột mốc', newMilestonePlaceholder:'Cột mốc mới...', addBtn:'Thêm',
+    fullCategoryOverview:'Tổng quan tất cả nhóm kỹ năng', targetWord:'mục tiêu',
+    installTipIOS:'Để có trải nghiệm ứng dụng đầy đủ: nhấn biểu tượng Chia sẻ, rồi chọn', addToHomeScreen:'Thêm vào Màn hình chính',
+    installTipOther:'Nhấn menu trình duyệt → Thêm vào Màn hình chính để có trải nghiệm ứng dụng đầy đủ',
+    gotIt:'Đã hiểu', resetConfirm:'Đặt lại toàn bộ tiến trình, XP, huy hiệu và chuỗi ngày? Không thể hoàn tác.',
+    yearWord:'Năm', doneWord:'hoàn thành', tierRookie:'Người Mới', tierApprentice:'Học Việc', tierOperator:'Vận Hành Viên', tierIndependent:'Tự Lập', tierMaster:'Bậc Thầy',
+    masterSuffix:' - Cao thủ', appTitle:'Sẵn Sàng Tự Lập',
+  },
+};
+function t(key){ return (UI[state.lang] && UI[state.lang][key]) || UI.en[key] || key; }
+function tr(dict, id, field){
+  const d = dict[id];
+  if(!d) return undefined;
+  const langObj = (state.lang==='vi' && d.vi) ? d.vi : d.en;
+  return langObj ? langObj[field] : undefined;
+}
+function catName(c){ return tr(CAT_I18N, c.id, 'name') || c.name; }
+function lessonText(l, field){ return tr(LESSON_I18N, l.id, field) || l[field]; }
+function lessonCatName(l){ const c = CATS.find(x=>x.id===l.catId); return c ? catName(c) : l.catName; }
+function missionText(m, field){ return tr(MISSION_I18N, m.id, field) || m[field]; }
+function badgeName(id){
+  const d = BADGE_I18N[id];
+  if(d) return (state.lang==='vi' && d.vi) ? d.vi.name : (SPECIAL_BADGES.find(b=>b.id===id)||{}).name;
+  return (SPECIAL_BADGES.find(b=>b.id===id)||{}).name;
+}
+function catBadgeName(c){
+  return state.lang==='vi' ? (catName(c) + t('masterSuffix')) : (c.name.split(' ')[0] + t('masterSuffix'));
+}
+function tierLabel(key){
+  const map = {rookie:'tierRookie', apprentice:'tierApprentice', operator:'tierOperator', independent:'tierIndependent', master:'tierMaster'};
+  return t(map[key] || 'tierRookie');
+}
+
 /* ============ STATE ============ */
 let state = {
   teenName: 'Allen',
+  lang: 'en',
   totalXP: 0,
   streak: 4,
   screen: 'home',
@@ -706,14 +1083,18 @@ function loadState(){
   }catch(e){}
 }
 function resetProgress(){
-  if(confirm('Reset all progress, XP, badges and streaks? This cannot be undone.')){
+  if(confirm(t('resetConfirm'))){
     try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
     location.reload();
   }
 }
 function setTeenName(name){
   state.teenName = name;
-  showToast('Profile name updated to '+name);
+  showToast((state.lang==='vi' ? 'Đã cập nhật tên hồ sơ thành ' : 'Profile name updated to ')+name);
+}
+function toggleLang(){
+  state.lang = state.lang==='vi' ? 'en' : 'vi';
+  render();
 }
 loadState();
 
@@ -731,9 +1112,9 @@ function dismissInstallTip(){
 function InstallTip(){
   if(installTipDismissed || isStandalone()) return '';
   if(isIOS()){
-    return `<div class="install-tip">📲 For the full app experience: tap the Share icon, then <b>&nbsp;Add to Home Screen&nbsp;</b><button onclick="dismissInstallTip()">Got it</button></div>`;
+    return `<div class="install-tip">📲 ${t('installTipIOS')} <b>&nbsp;${t('addToHomeScreen')}&nbsp;</b><button onclick="dismissInstallTip()">${t('gotIt')}</button></div>`;
   }
-  return `<div class="install-tip">📲 Tap your browser menu → <b>&nbsp;Add to Home Screen&nbsp;</b> for the full app experience<button onclick="dismissInstallTip()">Got it</button></div>`;
+  return `<div class="install-tip">📲 ${t('installTipOther')}<button onclick="dismissInstallTip()">${t('gotIt')}</button></div>`;
 }
 
 function independenceScore(s){
@@ -744,12 +1125,12 @@ function independenceScore(s){
 function levelInfo(xp){
   const level = Math.floor(xp/100)+1;
   const into = xp%100;
-  let title='Rookie';
-  if(level>=18) title='Master';
-  else if(level>=13) title='Independent';
-  else if(level>=8) title='Operator';
-  else if(level>=4) title='Apprentice';
-  return {level, into, need:100, title};
+  let tierKey='rookie';
+  if(level>=18) tierKey='master';
+  else if(level>=13) tierKey='independent';
+  else if(level>=8) tierKey='operator';
+  else if(level>=4) tierKey='apprentice';
+  return {level, into, need:100, title:tierLabel(tierKey)};
 }
 function catProgress(cat){
   const total = cat.lessons.length;
@@ -765,7 +1146,7 @@ function checkBadges(){
   SPECIAL_BADGES.forEach(b=>{
     if(!state.badgesEarned.includes(b.id) && b.test(state)){
       state.badgesEarned.push(b.id);
-      showToast('🏅 Badge earned: '+b.name);
+      showToast('🏅 '+(state.lang==='vi'?'Đã đạt huy hiệu: ':'Badge earned: ')+badgeName(b.id));
     }
   });
   CATS.forEach(c=>{
@@ -773,7 +1154,7 @@ function checkBadges(){
     const bid = 'cat_'+c.id;
     if(p.pct===100 && !state.badgesEarned.includes(bid)){
       state.badgesEarned.push(bid);
-      showToast('🏅 Mastery badge: '+c.name);
+      showToast('🏅 '+(state.lang==='vi'?'Huy hiệu thành thạo: ':'Mastery badge: ')+catName(c));
     }
   });
 }
@@ -792,7 +1173,7 @@ function toggleChk(lid, idx){
 function submitLesson(lid){
   state.lessonStatus[lid] = 'pending';
   if(!state.pendingParentTasks.includes(lid)) state.pendingParentTasks.push(lid);
-  showToast('Submitted for parent verification ✔');
+  showToast(state.lang==='vi' ? 'Đã gửi để phụ huynh xác nhận ✔' : 'Submitted for parent verification ✔');
   render();
 }
 function parentApprove(lid, approve){
@@ -803,15 +1184,15 @@ function parentApprove(lid, approve){
     state.totalXP += lesson.xp;
     state.activeMissions.forEach(m=>{ if(m.cat===lesson.catId) m.progress=Math.min(m.target,m.progress+1); });
     checkBadges();
-    showToast('Approved — +'+lesson.xp+' XP awarded!');
+    showToast(state.lang==='vi' ? ('Đã duyệt — nhận +'+lesson.xp+' XP!') : ('Approved — +'+lesson.xp+' XP awarded!'));
   } else {
     state.lessonStatus[lid] = 'available';
-    showToast('Sent back for another try');
+    showToast(state.lang==='vi' ? 'Đã gửi lại để thử lại' : 'Sent back for another try');
   }
   render();
 }
 function assignChallenge(catId, lessonId, note){
-  showToast('Challenge assigned to '+state.teenName+' ✔');
+  showToast(state.lang==='vi' ? ('Đã giao thử thách cho '+state.teenName+' ✔') : ('Challenge assigned to '+state.teenName+' ✔'));
 }
 function addMilestone(title, date){
   state.milestones.push({id:'ms'+Date.now(), title, date, done:false});
@@ -831,23 +1212,50 @@ function sendChat(text){
   setTimeout(()=>{ const sc=document.getElementById('chatScroll'); if(sc) sc.scrollTop=sc.scrollHeight; },30);
 }
 function coachReply(text){
-  const t = text.toLowerCase();
-  if(t.includes('budget')||t.includes('money')||t.includes('save')) return "Start with the 50/30/20 split: 50% needs, 30% wants, 20% savings. Check the Budgeting lesson in the Academy — the first task builds your real budget.";
-  if(t.includes('laundry')) return "Laundry rule #1: separate colors and check the tag before washing anything new and dark or bright. Head to Laundry & Clothing Care to run through it step by step.";
-  if(t.includes('cook')||t.includes('food')||t.includes('meal')) return "Master 5 go-to meals and you'll never be stuck. Eggs, stir fry, pasta, sheet-pan bake, and a soup/bowl covers most weeks. Check Cooking Basic Meals.";
-  if(t.includes('nervous')||t.includes('scared')||t.includes('worried')||t.includes('anxious')) return "Totally normal — everyone feels that before a big change. Pick one small skill to nail this week instead of thinking about all of it at once. What's one thing you could practice today?";
-  if(t.includes('friend')||t.includes('social')||t.includes('lonely')) return "Fastest way to build friends abroad: join one club in your first month and show up 3 times, even if it feels awkward at first. Check Social & Communication Skills for openers that actually work.";
-  if(t.includes('score')||t.includes('independence')) return 'Your Independence Score right now is '+independenceScore(state)+'%. It moves whenever a parent-verified task gets completed. Want a suggestion for what to tackle next?';
-  if(t.includes('next')||t.includes('what should i')||t.includes('suggest')) return suggestNext();
-  if(t.includes('streak')) return 'Your current streak is '+state.streak+' days. Keep showing up daily — even a 2-minute check-in on the app keeps it alive.';
-  if(t.includes('badge')) return "You've earned "+state.badgesEarned.length+' badges so far. Category mastery badges unlock when you finish both lessons in a category — check your Profile tab.';
-  return "Good question. Tell me a skill area — laundry, cooking, budgeting, transit, social, or safety — and I'll break it down simply. Or ask 'what should I learn next?' and I'll suggest something.";
+  const lc = text.toLowerCase();
+  const vi = state.lang==='vi';
+  if(/budget|money|save|tiền|ngân sách|tiết kiệm/.test(lc)) return vi
+    ? "Bắt đầu với công thức 50/30/20: 50% nhu cầu, 30% mong muốn, 20% tiết kiệm. Xem bài học Ngân Sách trong Học viện — nhiệm vụ đầu tiên sẽ giúp bạn lập ngân sách thật."
+    : "Start with the 50/30/20 split: 50% needs, 30% wants, 20% savings. Check the Budgeting lesson in the Academy — the first task builds your real budget.";
+  if(/laundry|giặt/.test(lc)) return vi
+    ? "Quy tắc giặt đồ số 1: tách riêng màu và kiểm tra nhãn trước khi giặt bất kỳ đồ mới nào tối màu hoặc sáng màu. Vào mục Giặt Ủi & Chăm Sóc Quần Áo để xem từng bước."
+    : "Laundry rule #1: separate colors and check the tag before washing anything new and dark or bright. Head to Laundry & Clothing Care to run through it step by step.";
+  if(/cook|food|meal|nấu|món ăn|ăn uống/.test(lc)) return vi
+    ? "Thành thạo 5 món ăn tủ và bạn sẽ không bao giờ bị bí. Trứng, xào, mì Ý, nướng khay, và súp/bát ngũ cốc đủ dùng cho hầu hết các tuần. Xem mục Nấu Ăn Cơ Bản."
+    : "Master 5 go-to meals and you'll never be stuck. Eggs, stir fry, pasta, sheet-pan bake, and a soup/bowl covers most weeks. Check Cooking Basic Meals.";
+  if(/nervous|scared|worried|anxious|lo lắng|sợ|hồi hộp/.test(lc)) return vi
+    ? "Hoàn toàn bình thường — ai cũng cảm thấy vậy trước một thay đổi lớn. Chọn một kỹ năng nhỏ để làm chủ trong tuần này thay vì nghĩ về tất cả cùng lúc. Có điều gì bạn có thể luyện tập ngay hôm nay không?"
+    : "Totally normal — everyone feels that before a big change. Pick one small skill to nail this week instead of thinking about all of it at once. What's one thing you could practice today?";
+  if(/friend|social|lonely|bạn bè|cô đơn|kết bạn/.test(lc)) return vi
+    ? "Cách nhanh nhất để kết bạn ở nước ngoài: tham gia một câu lạc bộ trong tháng đầu tiên và xuất hiện 3 lần, dù có cảm thấy hơi ngại lúc đầu. Xem mục Kỹ Năng Giao Tiếp Xã Hội để có những câu mở đầu thực sự hiệu quả."
+    : "Fastest way to build friends abroad: join one club in your first month and show up 3 times, even if it feels awkward at first. Check Social & Communication Skills for openers that actually work.";
+  if(/score|independence|điểm|độc lập/.test(lc)) return vi
+    ? ('Điểm Độc Lập của bạn hiện tại là '+independenceScore(state)+'%. Điểm này thay đổi mỗi khi một nhiệm vụ được phụ huynh xác nhận hoàn thành. Bạn có muốn gợi ý về việc tiếp theo nên làm không?')
+    : ('Your Independence Score right now is '+independenceScore(state)+'%. It moves whenever a parent-verified task gets completed. Want a suggestion for what to tackle next?');
+  if(/next|what should i|suggest|tiếp theo|nên học/.test(lc)) return suggestNext();
+  if(/streak|chuỗi ngày/.test(lc)) return vi
+    ? ('Chuỗi ngày hiện tại của bạn là '+state.streak+' ngày. Hãy tiếp tục xuất hiện mỗi ngày — chỉ cần vào ứng dụng 2 phút cũng đủ giữ chuỗi ngày.')
+    : ('Your current streak is '+state.streak+' days. Keep showing up daily — even a 2-minute check-in on the app keeps it alive.');
+  if(/badge|huy hiệu/.test(lc)) return vi
+    ? ('Bạn đã đạt được '+state.badgesEarned.length+' huy hiệu cho đến nay. Huy hiệu thành thạo nhóm kỹ năng sẽ mở khóa khi bạn hoàn thành cả 2 bài học trong một nhóm — xem tab Hồ sơ của bạn.')
+    : ("You've earned "+state.badgesEarned.length+' badges so far. Category mastery badges unlock when you finish both lessons in a category — check your Profile tab.');
+  return vi
+    ? "Câu hỏi hay đó. Cho mình biết một lĩnh vực kỹ năng — giặt đồ, nấu ăn, ngân sách, giao thông, xã hội, hoặc an toàn — và mình sẽ giải thích đơn giản cho bạn. Hoặc hỏi 'con nên học gì tiếp theo?' và mình sẽ gợi ý."
+    : "Good question. Tell me a skill area — laundry, cooking, budgeting, transit, social, or safety — and I'll break it down simply. Or ask 'what should I learn next?' and I'll suggest something.";
 }
 function suggestNext(){
   const notDone = ALL_LESSONS.filter(l=>state.lessonStatus[l.id]!=='completed');
-  if(notDone.length===0) return "You've completed everything in the Academy — seriously impressive. Time to go deeper on real-world practice challenges.";
+  const vi = state.lang==='vi';
+  if(notDone.length===0) return vi
+    ? "Bạn đã hoàn thành mọi thứ trong Học viện — thực sự ấn tượng. Đã đến lúc đào sâu hơn vào các thử thách thực hành thực tế."
+    : "You've completed everything in the Academy — seriously impressive. Time to go deeper on real-world practice challenges.";
   const pick = notDone[0];
-  return 'I\'d suggest "'+pick.title+'" in '+pick.catName+' next — it\'s worth '+pick.xp+' XP and builds directly toward your Year '+ (CATS.find(c=>c.id===pick.catId).year) +' goals.';
+  const catN = lessonCatName(pick);
+  const title = lessonText(pick,'title');
+  const year = CATS.find(c=>c.id===pick.catId).year;
+  return vi
+    ? ('Bạn nên học "'+title+'" trong mục '+catN+' tiếp theo — được '+pick.xp+' XP và giúp bạn tiến gần hơn tới mục tiêu Năm '+year+'.')
+    : ('I\'d suggest "'+title+'" in '+catN+' next — it\'s worth '+pick.xp+' XP and builds directly toward your Year '+year+' goals.');
 }
 
 /* ============ RENDER HELPERS ============ */
@@ -855,18 +1263,21 @@ function esc(s){ return (s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>
 
 function TopBar(){
   return `<div class="topbar">
-    <div class="brand"><div class="flag">🎓</div> Ready for Independence</div>
-    <button class="mode-toggle ${state.parentMode?'parent-active':''}" onclick="toggleParent()">${state.parentMode? '👨‍👩‍👦 Parent Mode':'Switch to Parent'}</button>
+    <div class="brand"><div class="flag">🎓</div> <span class="bt">${t('appTitle')}</span></div>
+    <div class="topbar-actions">
+      <button class="mode-toggle lang-toggle" onclick="toggleLang()">🌐 ${state.lang==='vi'?'VI':'EN'}</button>
+      <button class="mode-toggle ${state.parentMode?'parent-active':''}" onclick="toggleParent()">${state.parentMode? t('parentModeLabel') : t('switchToParent')}</button>
+    </div>
   </div>`;
 }
 function BottomNav(){
   if(state.parentMode) return '';
   const items = [
-    {id:'home', ic:'🏠', l:'Home'},
-    {id:'academy', ic:'🎯', l:'Academy'},
-    {id:'missions', ic:'🚀', l:'Missions'},
-    {id:'coach', ic:'🤖', l:'Coach'},
-    {id:'profile', ic:'👤', l:'Profile'},
+    {id:'home', ic:'🏠', l:t('navHome')},
+    {id:'academy', ic:'🎯', l:t('navAcademy')},
+    {id:'missions', ic:'🚀', l:t('navMissions')},
+    {id:'coach', ic:'🤖', l:t('navCoach')},
+    {id:'profile', ic:'👤', l:t('navProfile')},
   ];
   return `<div class="bottomnav">${items.map(i=>`
     <button class="navbtn ${state.screen===i.id || (i.id==='academy'&&(state.screen==='catDetail'||state.screen==='lessonDetail'))?'active':''}" onclick="nav('${i.id}')">
@@ -883,49 +1294,49 @@ function ScreenHome(){
   return `
   <div class="hero-banner">
     <div class="hello">
-      <div class="sub">Welcome back,</div>
+      <div class="sub">${t('welcomeBack')}</div>
       <h1>${esc(state.teenName)} 👋</h1>
     </div>
     <div class="stat-row">
       <div class="stat-chip"><div class="n">Lv.${lv.level}</div><div class="l">${lv.title}</div></div>
-      <div class="stat-chip"><div class="n">${state.totalXP} XP</div><div class="l">Total</div></div>
-      <div class="stat-chip"><div class="n">🔥 ${state.streak}</div><div class="l">Day Streak</div></div>
+      <div class="stat-chip"><div class="n">${state.totalXP} XP</div><div class="l">${t('totalLabel')}</div></div>
+      <div class="stat-chip"><div class="n">🔥 ${state.streak}</div><div class="l">${t('dayStreakLabel')}</div></div>
     </div>
   </div>
   <div class="card">
     <div class="score-wrap">
       <div class="ring" style="--pct:${score}"><div class="val">${score}<small>SCORE</small></div></div>
       <div style="flex:1;">
-        <div style="font-weight:800;font-size:14px;margin-bottom:4px;">Independence Score</div>
-        <div style="font-size:12px;color:var(--ink-soft);line-height:1.4;">Rises as parent-verified skills are completed across all 16 categories.</div>
+        <div style="font-weight:800;font-size:14px;margin-bottom:4px;">${t('independenceScoreTitle')}</div>
+        <div style="font-size:12px;color:var(--ink-soft);line-height:1.4;">${t('independenceScoreDesc')}</div>
       </div>
     </div>
     <div style="margin-top:14px;">
-      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--ink-soft);margin-bottom:4px;"><span>Level ${lv.level}</span><span>${lv.into}/${lv.need} XP</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--ink-soft);margin-bottom:4px;"><span>${t('levelWord')} ${lv.level}</span><span>${lv.into}/${lv.need} XP</span></div>
       <div class="xpbar-track"><div class="xpbar-fill" style="width:${lv.into}%;"></div></div>
     </div>
   </div>
   ${pending>0? `<div class="card" style="border-left:4px solid var(--amber);">
-    <div style="font-weight:800;font-size:13px;">⏳ ${pending} task${pending>1?'s':''} awaiting parent verification</div>
-    <div style="font-size:12px;color:var(--ink-soft);margin-top:3px;">Your parent needs to approve these in Parent Mode before you get XP.</div>
+    <div style="font-weight:800;font-size:13px;">⏳ ${state.lang==='vi' ? (pending+' nhiệm vụ đang chờ phụ huynh xác nhận') : (pending+' task'+(pending>1?'s':'')+' awaiting parent verification')}</div>
+    <div style="font-size:12px;color:var(--ink-soft);margin-top:3px;">${state.lang==='vi' ? 'Phụ huynh cần duyệt các nhiệm vụ này trong Chế độ Phụ huynh trước khi bạn nhận được XP.' : 'Your parent needs to approve these in Parent Mode before you get XP.'}</div>
   </div>`:''}
-  <div class="section-title">Continue Learning</div>
+  <div class="section-title">${t('continueLearning')}</div>
   <div class="card" style="cursor:pointer;" onclick="openLesson('${nextLesson.id}')">
     <div style="display:flex;gap:12px;align-items:center;">
       <div style="font-size:28px;">${nextLesson.catIcon}</div>
       <div style="flex:1;">
-        <div style="font-size:11px;color:var(--ink-soft);font-weight:700;text-transform:uppercase;">${esc(nextLesson.catName)}</div>
-        <div style="font-weight:800;font-size:14.5px;margin-top:2px;">${esc(nextLesson.title)}</div>
+        <div style="font-size:11px;color:var(--ink-soft);font-weight:700;text-transform:uppercase;">${esc(lessonCatName(nextLesson))}</div>
+        <div style="font-weight:800;font-size:14.5px;margin-top:2px;">${esc(lessonText(nextLesson,'title'))}</div>
       </div>
       <div class="chev">›</div>
     </div>
   </div>
-  <div class="section-title">This Week's Missions</div>
+  <div class="section-title">${t('thisWeeksMissions')}</div>
   ${state.activeMissions.map(m=>MissionCard(m)).join('')}
-  <div class="section-title">Coach Tip</div>
+  <div class="section-title">${t('coachTip')}</div>
   <div class="card">
     <div style="font-size:13px;line-height:1.5;">${esc(suggestNext())}</div>
-    <button class="btn btn-outline" style="margin-top:12px;" onclick="nav('coach')">Ask Coach More →</button>
+    <button class="btn btn-outline" style="margin-top:12px;" onclick="nav('coach')">${t('askCoachMore')}</button>
   </div>
   `;
 }
@@ -934,23 +1345,26 @@ function MissionCard(m){
   const pct = Math.round((m.progress/m.target)*100);
   return `<div class="mission-card">
     <div class="top">
-      <div><div class="name">${esc(m.name)}</div><div class="desc">${esc(m.desc)}</div></div>
+      <div><div class="name">${esc(missionText(m,'name'))}</div><div class="desc">${esc(missionText(m,'desc'))}</div></div>
       <div class="mission-xp">+${m.xp} XP</div>
     </div>
     <div class="ptrack" style="margin-top:10px;"><div class="pfill" style="width:${pct}%;background:var(--teal);"></div></div>
-    <div style="font-size:11px;color:var(--ink-soft);margin-top:4px;">${m.progress}/${m.target} complete</div>
+    <div style="font-size:11px;color:var(--ink-soft);margin-top:4px;">${m.progress}/${m.target} ${t('doneWord')}</div>
   </div>`;
 }
 
 function ScreenAcademy(){
   const y1 = CATS.filter(c=>c.year===1);
   const y2 = CATS.filter(c=>c.year===2);
+  const subtitle = state.lang==='vi'
+    ? `16 nhóm kỹ năng · ${ALL_LESSONS.length} bài học · chạm để bắt đầu`
+    : `16 categories · ${ALL_LESSONS.length} lessons · tap any to start`;
   return `
-  <h2 class="font-display" style="margin:2px 0 4px;">Life Skills Academy</h2>
-  <div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:6px;">16 categories · ${ALL_LESSONS.length} lessons · tap any to start</div>
-  <div class="section-title">Year 1 — Fundamentals</div>
+  <h2 class="font-display" style="margin:2px 0 4px;">${t('lifeSkillsAcademy')}</h2>
+  <div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:6px;">${subtitle}</div>
+  <div class="section-title">${t('year1')}</div>
   <div class="cat-grid">${y1.map(CatCard).join('')}</div>
-  <div class="section-title">Year 2 — Independent Living</div>
+  <div class="section-title">${t('year2')}</div>
   <div class="cat-grid">${y2.map(CatCard).join('')}</div>
   `;
 }
@@ -959,9 +1373,9 @@ function CatCard(c){
   return `<div class="cat-card" style="--cat-color:${c.color};" onclick="openCat('${c.id}')">
     <div class="tag">Y${c.year}</div>
     <div class="ic">${c.icon}</div>
-    <div class="name">${esc(c.name)}</div>
+    <div class="name">${esc(catName(c))}</div>
     <div class="mini-track"><div class="mini-fill" style="width:${p.pct}%;--cat-color:${c.color};background:${c.color};"></div></div>
-    <div class="prog">${p.done}/${p.total} done</div>
+    <div class="prog">${p.done}/${p.total} ${t('doneWord')}</div>
   </div>`;
 }
 
@@ -969,20 +1383,23 @@ function ScreenCatDetail(){
   const c = CATS.find(x=>x.id===state.activeCat);
   if(!c) return ScreenAcademy();
   const p = catProgress(c);
+  const lessonsCompletedMastery = state.lang==='vi'
+    ? `${p.done}/${p.total} bài học đã hoàn thành · ${p.pct}% thành thạo`
+    : `${p.done}/${p.total} lessons completed · ${p.pct}% mastery`;
   return `
-  <button class="backbtn" onclick="nav('academy')">‹ Academy</button>
+  <button class="backbtn" onclick="nav('academy')">‹ ${t('navAcademy')}</button>
   <div class="card" style="border-left:5px solid ${c.color};">
     <div style="display:flex;align-items:center;gap:12px;">
       <div style="font-size:30px;">${c.icon}</div>
       <div>
-        <span class="pill-year">Year ${c.year}</span>
-        <h2 style="margin:2px 0;font-size:17px;">${esc(c.name)}</h2>
+        <span class="pill-year">${t('yearWord')} ${c.year}</span>
+        <h2 style="margin:2px 0;font-size:17px;">${esc(catName(c))}</h2>
       </div>
     </div>
     <div class="ptrack" style="margin-top:12px;"><div class="pfill" style="width:${p.pct}%;background:${c.color};"></div></div>
-    <div style="font-size:11px;color:var(--ink-soft);margin-top:5px;">${p.done}/${p.total} lessons completed · ${p.pct}% mastery</div>
+    <div style="font-size:11px;color:var(--ink-soft);margin-top:5px;">${lessonsCompletedMastery}</div>
   </div>
-  <div class="section-title">Lessons</div>
+  <div class="section-title">${t('lessonsTitle')}</div>
   <div class="card card-flush">
     ${c.lessons.map(l=>LessonRow(l)).join('')}
   </div>
@@ -993,7 +1410,7 @@ function LessonRow(l){
   const icon = st==='completed'?'✓':st==='pending'?'⏳':'○';
   return `<div class="lesson-row" onclick="openLesson('${l.id}')">
     <div class="lstatus ${st}">${icon}</div>
-    <div class="lt"><div class="t">${esc(l.title)}</div><div class="x">+${l.xp} XP ${st==='pending'?' · awaiting parent approval':''}</div></div>
+    <div class="lt"><div class="t">${esc(lessonText(l,'title'))}</div><div class="x">+${l.xp} XP ${st==='pending'? t('awaitingApproval') :''}</div></div>
     <div class="chev">›</div>
   </div>`;
 }
@@ -1004,92 +1421,99 @@ function ScreenLessonDetail(){
   const c = CATS.find(x=>x.id===l.catId);
   const st = state.lessonStatus[l.id];
   const checked = state.checklistState[l.id] || [];
-  const allChecked = checked.length === l.checklist.length;
+  const checklist = lessonText(l,'checklist');
+  const steps = lessonText(l,'steps');
+  const allChecked = checked.length === checklist.length;
+  const checkOffLabel = state.lang==='vi'
+    ? `Đánh dấu tất cả để gửi (${checked.length}/${checklist.length})`
+    : `Check off all items to submit (${checked.length}/${checklist.length})`;
   return `
-  <button class="backbtn" onclick="openCat('${l.catId}')">‹ ${esc(c.name)}</button>
+  <button class="backbtn" onclick="openCat('${l.catId}')">‹ ${esc(catName(c))}</button>
   <div class="lesson-hero">
-    <div class="k">${c.icon} ${esc(c.name)} · Year ${c.year}</div>
-    <h2>${esc(l.title)}</h2>
-    <div class="xp">+${l.xp} XP ${st==='completed'?' · ✓ Completed':st==='pending'?' · ⏳ Pending parent verification':''}</div>
+    <div class="k">${c.icon} ${esc(catName(c))} · ${t('yearWord')} ${c.year}</div>
+    <h2>${esc(lessonText(l,'title'))}</h2>
+    <div class="xp">+${l.xp} XP ${st==='completed'? t('completedSuffix') : st==='pending'? t('pendingSuffix') :''}</div>
   </div>
 
   <div class="card">
-    <div class="block-title">💡 Why It Matters</div>
-    <div style="font-size:13.5px;line-height:1.55;">${esc(l.why)}</div>
+    <div class="block-title">💡 ${t('whyItMatters')}</div>
+    <div style="font-size:13.5px;line-height:1.55;">${esc(lessonText(l,'why'))}</div>
   </div>
 
   <div class="card">
-    <div class="block-title">📋 Step-by-Step</div>
-    <ul class="steps">${l.steps.map((s,i)=>`<li><span class="num">${i+1}</span><span>${esc(s)}</span></li>`).join('')}</ul>
+    <div class="block-title">📋 ${t('stepByStep')}</div>
+    <ul class="steps">${steps.map((s,i)=>`<li><span class="num">${i+1}</span><span>${esc(s)}</span></li>`).join('')}</ul>
   </div>
 
   <div class="card">
-    <div class="block-title">🔎 Real Example</div>
-    <div class="ex-box">${esc(l.example)}</div>
+    <div class="block-title">🔎 ${t('realExample')}</div>
+    <div class="ex-box">${esc(lessonText(l,'example'))}</div>
   </div>
 
   <div class="card">
-    <div class="block-title">✏️ Practice Exercise</div>
-    <div style="font-size:13.5px;line-height:1.5;">${esc(l.practice)}</div>
+    <div class="block-title">✏️ ${t('practiceExercise')}</div>
+    <div style="font-size:13.5px;line-height:1.5;">${esc(lessonText(l,'practice'))}</div>
   </div>
 
   <div class="card" style="border-left:4px solid var(--coral);">
-    <div class="block-title" style="color:var(--coral);">🏆 Real-World Challenge</div>
-    <div style="font-size:13.5px;line-height:1.5;">${esc(l.challenge)}</div>
+    <div class="block-title" style="color:var(--coral);">🏆 ${t('realWorldChallenge')}</div>
+    <div style="font-size:13.5px;line-height:1.5;">${esc(lessonText(l,'challenge'))}</div>
   </div>
 
   <div class="card">
-    <div class="block-title">✅ Completion Checklist</div>
-    ${l.checklist.map((item,i)=>`
+    <div class="block-title">✅ ${t('completionChecklist')}</div>
+    ${checklist.map((item,i)=>`
       <div class="chk-item ${checked.includes(i)?'done':''}" onclick="toggleChk('${l.id}',${i})">
         <div class="chk-box ${checked.includes(i)?'done':''}">${checked.includes(i)?'✓':''}</div>
         <div class="t">${esc(item)}</div>
       </div>`).join('')}
   </div>
 
-  ${st==='completed' ? `<div class="card" style="text-align:center;background:var(--navy);color:#fff;">✓ Skill mastered — nice work.</div>` :
-    st==='pending' ? `<div class="card" style="text-align:center;">⏳ Waiting on parent verification in Parent Mode.</div>` :
+  ${st==='completed' ? `<div class="card" style="text-align:center;background:var(--navy);color:#fff;">${t('skillMastered')}</div>` :
+    st==='pending' ? `<div class="card" style="text-align:center;">${t('waitingVerification')}</div>` :
     `<button class="btn btn-primary" ${allChecked?'':'disabled'} onclick="submitLesson('${l.id}')">
-      ${allChecked? 'Submit for Parent Verification' : 'Check off all items to submit ('+checked.length+'/'+l.checklist.length+')'}
+      ${allChecked? t('submitForVerification') : checkOffLabel}
     </button>`}
   `;
 }
 
 function ScreenMissions(){
   return `
-  <h2 class="font-display" style="margin:2px 0 14px;">Missions & Streaks</h2>
+  <h2 class="font-display" style="margin:2px 0 14px;">${t('missionsStreaksTitle')}</h2>
   <div class="card" style="background:var(--navy);color:#fff;">
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <div>
-        <div style="font-size:12px;color:rgba(255,255,255,.65);">Current Streak</div>
-        <div style="font-size:26px;font-weight:800;font-family:'Sora',sans-serif;">🔥 ${state.streak} days</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.65);">${t('currentStreak')}</div>
+        <div style="font-size:26px;font-weight:800;font-family:'Sora',sans-serif;">🔥 ${state.streak} ${state.lang==='vi'?'ngày':'days'}</div>
       </div>
       <div style="text-align:right;">
-        <div style="font-size:12px;color:rgba(255,255,255,.65);">Badges</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.65);">${t('badgesLabel')}</div>
         <div style="font-size:26px;font-weight:800;font-family:'Sora',sans-serif;">${state.badgesEarned.length}</div>
       </div>
     </div>
   </div>
-  <div class="section-title">Active Weekly Missions</div>
+  <div class="section-title">${t('activeWeeklyMissions')}</div>
   ${state.activeMissions.map(m=>MissionCard(m)).join('')}
-  <div class="section-title">Badge Case</div>
+  <div class="section-title">${t('badgeCase')}</div>
   <div class="badge-grid">
-    ${[...SPECIAL_BADGES.map(b=>({id:b.id,icon:b.icon,name:b.name})), ...CATS.map(c=>({id:'cat_'+c.id, icon:c.icon, name:c.name.split(' ')[0]+' Master'}))]
+    ${[...SPECIAL_BADGES.map(b=>({id:b.id,icon:b.icon,name:badgeName(b.id)})), ...CATS.map(c=>({id:'cat_'+c.id, icon:c.icon, name:catBadgeName(c)}))]
       .map(b=>`<div class="badge-tile ${state.badgesEarned.includes(b.id)?'':'locked'}"><div>${b.icon}</div><div class="bn">${esc(b.name)}</div></div>`).join('')}
   </div>
   `;
 }
 
 function ScreenCoach(){
-  const quick = ['What should I learn next?', 'Help me with budgeting', "I'm nervous about moving", 'How do I do laundry?', "What's my Independence Score?"];
+  const quick = state.lang==='vi'
+    ? ['Tôi nên học gì tiếp theo?', 'Giúp tôi lập ngân sách', 'Tôi lo lắng về việc chuyển đi', 'Làm sao để giặt đồ?', 'Điểm Độc Lập của tôi là bao nhiêu?']
+    : ['What should I learn next?', 'Help me with budgeting', "I'm nervous about moving", 'How do I do laundry?', "What's my Independence Score?"];
   return `
-  <h2 class="font-display" style="margin:2px 0 10px;">Coach</h2>
+  <h2 class="font-display" style="margin:2px 0 10px;">${t('coachTitle')}</h2>
   <div id="chatScroll" class="chat-scroll" style="max-height:calc(100vh - 320px); overflow-y:auto;">
     ${state.chat.map(m=>`<div class="bubble ${m.who}">${esc(m.text)}</div>`).join('')}
   </div>
   <div class="chip-row">${quick.map(q=>`<div class="chip" onclick="sendChat('${q.replace(/'/g,"\\'")}')">${esc(q)}</div>`).join('')}</div>
   <div class="chatbar">
-    <input id="chatInput" type="text" placeholder="Ask Coach anything..." onkeydown="if(event.key==='Enter'){sendChat(this.value); this.value='';}" />
+    <input id="chatInput" type="text" placeholder="${t('askCoachPlaceholder')}" onkeydown="if(event.key==='Enter'){sendChat(this.value); this.value='';}" />
     <button onclick="const i=document.getElementById('chatInput'); sendChat(i.value); i.value='';">➤</button>
   </div>
   `;
@@ -1100,50 +1524,43 @@ function ScreenProfile(){
   const score = independenceScore(state);
   const sorted = [...CATS].sort((a,b)=>catProgress(b).pct-catProgress(a).pct);
   return `
-  <h2 class="font-display" style="margin:2px 0 14px;">Profile</h2>
+  <h2 class="font-display" style="margin:2px 0 14px;">${t('profileTitle')}</h2>
   <div class="card" style="text-align:center;">
     <div style="width:72px;height:72px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;margin:0 auto 10px;font-family:'Sora',sans-serif;">${esc(state.teenName[0])}</div>
     <div style="font-weight:800;font-size:17px;">${esc(state.teenName)}</div>
-    <div class="badge-pill" style="margin-top:8px;">Level ${lv.level} · ${lv.title}</div>
+    <div class="badge-pill" style="margin-top:8px;">${t('levelWord')} ${lv.level} · ${lv.title}</div>
   </div>
   <div class="stat-row">
-    <div class="stat-chip" style="background:var(--card);border-color:var(--line);color:var(--ink);"><div class="n" style="color:var(--navy);">${score}%</div><div class="l">Independence</div></div>
-    <div class="stat-chip" style="background:var(--card);border-color:var(--line);color:var(--ink);"><div class="n" style="color:var(--navy);">${state.totalXP}</div><div class="l">Total XP</div></div>
-    <div class="stat-chip" style="background:var(--card);border-color:var(--line);color:var(--ink);"><div class="n" style="color:var(--navy);">${state.badgesEarned.length}</div><div class="l">Badges</div></div>
+    <div class="stat-chip" style="background:var(--card);border-color:var(--line);color:var(--ink);"><div class="n" style="color:var(--navy);">${score}%</div><div class="l" style="color:var(--ink-soft);">${t('independenceScoreTitle')}</div></div>
+    <div class="stat-chip" style="background:var(--card);border-color:var(--line);color:var(--ink);"><div class="n" style="color:var(--navy);">${state.totalXP}</div><div class="l" style="color:var(--ink-soft);">${t('totalLabel')} XP</div></div>
+    <div class="stat-chip" style="background:var(--card);border-color:var(--line);color:var(--ink);"><div class="n" style="color:var(--navy);">${state.badgesEarned.length}</div><div class="l" style="color:var(--ink-soft);">${t('badgesLabel')}</div></div>
   </div>
-  <div class="section-title">Mastery by Category</div>
+  <div class="section-title">${t('masteryByCategory')}</div>
   <div class="card">
     ${sorted.map(c=>{const p=catProgress(c); return `
       <div class="pbar-row">
-        <div class="lbl"><span>${c.icon} ${esc(c.name)}</span><span>${p.pct}%</span></div>
+        <div class="lbl"><span>${c.icon} ${esc(catName(c))}</span><span>${p.pct}%</span></div>
         <div class="ptrack"><div class="pfill" style="width:${p.pct}%;background:${c.color};"></div></div>
       </div>`;}).join('')}
   </div>
-  <div class="section-title">Two-Year Roadmap</div>
+  <div class="section-title">${t('twoYearRoadmap')}</div>
   ${Roadmap()}
-  <div class="section-title">Settings</div>
+  <div class="section-title">${t('settingsTitle')}</div>
   <div class="card">
     <div class="formfield">
-      <label>Profile Name</label>
-      <input id="nameInput" type="text" value="${esc(state.teenName)}" placeholder="Enter name" />
+      <label>${t('profileNameLabel')}</label>
+      <input id="nameInput" type="text" value="${esc(state.teenName)}" placeholder="${t('enterNamePlaceholder')}" />
     </div>
-    <button class="btn btn-outline" onclick="const i=document.getElementById('nameInput'); if(i.value.trim()){ setTeenName(i.value.trim()); }">Save Name</button>
-    <div style="font-size:11px;color:var(--ink-soft);margin-top:8px;line-height:1.4;">Switching this app to a different kid? Change the name here, then use Reset All Progress below for a clean slate — otherwise XP, badges, and streak carry over.</div>
+    <button class="btn btn-outline" onclick="const i=document.getElementById('nameInput'); if(i.value.trim()){ setTeenName(i.value.trim()); }">${t('saveNameBtn')}</button>
+    <div style="font-size:11px;color:var(--ink-soft);margin-top:8px;line-height:1.4;">${t('switchKidNote')}</div>
   </div>
-  <button class="btn btn-danger-o" onclick="resetProgress()">Reset All Progress</button>
+  <button class="btn btn-danger-o" onclick="resetProgress()">${t('resetAllProgress')}</button>
   `;
 }
 
 function Roadmap(){
-  const items = [
-    {when:'Aug 2026 · Now', what:'Program Start — Fundamentals', detail:'Daily routines, hygiene, laundry, cooking basics, first budget, time management systems.', state:'now'},
-    {when:'Jan 2027', what:'Mid Year 1 Checkpoint', detail:'Independent routines running solo. Target: 40%+ Independence Score.', state:'future'},
-    {when:'Aug 2027', what:'Year 2 Begins — Independent Living', detail:'Travel, dorm life, healthcare, transit, safety, culture prep begin.', state:'future'},
-    {when:'Mar 2028', what:'Pre-Departure Readiness Review', detail:'Full skills audit with parents. Target: 80%+ Independence Score.', state:'future'},
-    {when:'Summer 2028', what:'Departure — 9th Grade in the US', detail:'Final packing, travel day walkthrough, airport navigation solo run.', state:'future'},
-  ];
   return `<div class="card"><div class="timeline">
-    ${items.map(i=>`<div class="tl-item"><div class="tl-dot ${i.state}"></div><div class="when">${i.when}</div><div class="what">${i.what}</div><div class="detail">${i.detail}</div></div>`).join('')}
+    ${ROADMAP_I18N.map((i,idx)=>{const d=(state.lang==='vi'&&i.vi)?i.vi:i.en; const st=idx===0?'now':'future'; return `<div class="tl-item"><div class="tl-dot ${st}"></div><div class="when">${d.when}</div><div class="what">${d.what}</div><div class="detail">${d.detail}</div></div>`;}).join('')}
   </div></div>`;
 }
 
@@ -1154,21 +1571,21 @@ function ScreenParent(){
   const gaps = [...sorted].reverse().slice(0,3);
   const pending = state.pendingParentTasks.map(id=>ALL_LESSONS.find(l=>l.id===id)).filter(Boolean);
   return `
-  <h2 class="font-display" style="margin:2px 0 4px;">Parent Dashboard</h2>
-  <div style="font-size:12px;color:var(--ink-soft);margin-bottom:14px;">Monitoring ${esc(state.teenName)}'s readiness journey</div>
+  <h2 class="font-display" style="margin:2px 0 4px;">${t('parentDashboardTitle')}</h2>
+  <div style="font-size:12px;color:var(--ink-soft);margin-bottom:14px;">${state.lang==='vi'?`Đang theo dõi hành trình sẵn sàng của ${esc(state.teenName)}`:`Monitoring ${esc(state.teenName)}'s readiness journey`}</div>
 
   <div class="card" style="background:var(--navy);color:#fff;">
     <div style="display:flex;justify-content:space-between;align-items:center;">
-      <div><div style="font-size:12px;color:rgba(255,255,255,.65);">Independence Score</div><div style="font-size:30px;font-weight:800;font-family:'Sora',sans-serif;">${score}%</div></div>
-      <div style="text-align:right;"><div style="font-size:12px;color:rgba(255,255,255,.65);">Streak</div><div style="font-size:22px;font-weight:800;">🔥 ${state.streak}d</div></div>
+      <div><div style="font-size:12px;color:rgba(255,255,255,.65);">${t('independenceScoreShort')}</div><div style="font-size:30px;font-weight:800;font-family:'Sora',sans-serif;">${score}%</div></div>
+      <div style="text-align:right;"><div style="font-size:12px;color:rgba(255,255,255,.65);">${t('streakShort')}</div><div style="font-size:22px;font-weight:800;">🔥 ${state.streak}${state.lang==='vi'?' ngày':'d'}</div></div>
     </div>
   </div>
 
-  <div class="section-title">⏳ Pending Verification (${pending.length})</div>
+  <div class="section-title">⏳ ${state.lang==='vi'?'Đang Chờ Xác Nhận':'Pending Verification'} (${pending.length})</div>
   <div class="card">
-    ${pending.length===0? `<div class="empty">Nothing waiting — all caught up.</div>` :
+    ${pending.length===0? `<div class="empty">${t('allCaughtUp')}</div>` :
       pending.map(l=>`<div class="verify-row">
-        <div><div class="vt">${esc(l.title)}</div><div class="vs">${esc(l.catName)} · +${l.xp} XP</div></div>
+        <div><div class="vt">${esc(lessonText(l,'title'))}</div><div class="vs">${esc(lessonCatName(l))} · +${l.xp} XP</div></div>
         <div class="vbtns">
           <button class="iconbtn ok" onclick="parentApprove('${l.id}',true)">✓</button>
           <button class="iconbtn no" onclick="parentApprove('${l.id}',false)">✕</button>
@@ -1176,44 +1593,44 @@ function ScreenParent(){
       </div>`).join('')}
   </div>
 
-  <div class="section-title">Strengths & Gaps</div>
+  <div class="section-title">${t('strengthsGaps')}</div>
   <div class="card">
-    <div style="font-weight:800;font-size:12.5px;color:var(--teal);margin-bottom:6px;">TOP STRENGTHS</div>
-    ${strengths.map(c=>{const p=catProgress(c); return `<div class="pbar-row"><div class="lbl"><span>${c.icon} ${esc(c.name)}</span><span>${p.pct}%</span></div><div class="ptrack"><div class="pfill" style="width:${p.pct}%;background:var(--teal);"></div></div></div>`;}).join('')}
-    <div style="font-weight:800;font-size:12.5px;color:var(--coral);margin:14px 0 6px;">NEEDS ATTENTION</div>
-    ${gaps.map(c=>{const p=catProgress(c); return `<div class="pbar-row"><div class="lbl"><span>${c.icon} ${esc(c.name)}</span><span>${p.pct}%</span></div><div class="ptrack"><div class="pfill" style="width:${p.pct}%;background:var(--coral);"></div></div></div>`;}).join('')}
+    <div style="font-weight:800;font-size:12.5px;color:var(--teal);margin-bottom:6px;">${t('topStrengths')}</div>
+    ${strengths.map(c=>{const p=catProgress(c); return `<div class="pbar-row"><div class="lbl"><span>${c.icon} ${esc(catName(c))}</span><span>${p.pct}%</span></div><div class="ptrack"><div class="pfill" style="width:${p.pct}%;background:var(--teal);"></div></div></div>`;}).join('')}
+    <div style="font-weight:800;font-size:12.5px;color:var(--coral);margin:14px 0 6px;">${t('needsAttention')}</div>
+    ${gaps.map(c=>{const p=catProgress(c); return `<div class="pbar-row"><div class="lbl"><span>${c.icon} ${esc(catName(c))}</span><span>${p.pct}%</span></div><div class="ptrack"><div class="pfill" style="width:${p.pct}%;background:var(--coral);"></div></div></div>`;}).join('')}
   </div>
 
-  <div class="section-title">Assign a Challenge</div>
+  <div class="section-title">${t('assignChallengeTitle')}</div>
   <div class="card">
     <div class="formfield">
-      <label>Category</label>
-      <select id="assignCat">${CATS.map(c=>`<option value="${c.id}">${c.icon} ${esc(c.name)}</option>`).join('')}</select>
+      <label>${t('categoryLabel')}</label>
+      <select id="assignCat">${CATS.map(c=>`<option value="${c.id}">${c.icon} ${esc(catName(c))}</option>`).join('')}</select>
     </div>
     <div class="formfield">
-      <label>Note (optional)</label>
-      <textarea id="assignNote" rows="2" placeholder="e.g. Do this before Saturday"></textarea>
+      <label>${t('noteOptional')}</label>
+      <textarea id="assignNote" rows="2" placeholder="${t('notePlaceholder')}"></textarea>
     </div>
-    <button class="btn btn-primary" onclick="const cat=document.getElementById('assignCat').value; const note=document.getElementById('assignNote').value; assignChallenge(cat,null,note);">Assign Challenge</button>
+    <button class="btn btn-primary" onclick="const cat=document.getElementById('assignCat').value; const note=document.getElementById('assignNote').value; assignChallenge(cat,null,note);">${t('assignChallengeBtn')}</button>
   </div>
 
-  <div class="section-title">Milestones</div>
+  <div class="section-title">${t('milestonesTitle')}</div>
   <div class="card">
     ${state.milestones.map(m=>`
       <div class="chk-item ${m.done?'done':''}" onclick="toggleMilestone('${m.id}')">
         <div class="chk-box ${m.done?'done':''}">${m.done?'✓':''}</div>
-        <div class="t">${esc(m.title)} <span style="color:var(--ink-soft);font-weight:600;">— target ${m.date}</span></div>
+        <div class="t">${esc(m.title)} <span style="color:var(--ink-soft);font-weight:600;">— ${t('targetWord')} ${m.date}</span></div>
       </div>`).join('')}
     <div style="display:flex;gap:8px;margin-top:12px;">
-      <input id="msTitle" placeholder="New milestone..." style="flex:1;border:1.5px solid var(--line);border-radius:8px;padding:9px 11px;font-size:12.5px;font-family:inherit;">
+      <input id="msTitle" placeholder="${t('newMilestonePlaceholder')}" style="flex:1;border:1.5px solid var(--line);border-radius:8px;padding:9px 11px;font-size:12.5px;font-family:inherit;">
       <input id="msDate" type="date" style="border:1.5px solid var(--line);border-radius:8px;padding:9px 11px;font-size:12.5px;font-family:inherit;">
-      <button class="btn btn-primary btn-sm" onclick="const t=document.getElementById('msTitle'); const d=document.getElementById('msDate'); if(t.value){addMilestone(t.value, d.value||'TBD'); t.value='';}">Add</button>
+      <button class="btn btn-primary btn-sm" onclick="const t=document.getElementById('msTitle'); const d=document.getElementById('msDate'); if(t.value){addMilestone(t.value, d.value||'TBD'); t.value='';}">${t('addBtn')}</button>
     </div>
   </div>
 
-  <div class="section-title">Full Category Overview</div>
+  <div class="section-title">${t('fullCategoryOverview')}</div>
   <div class="card">
-    ${CATS.map(c=>{const p=catProgress(c); return `<div class="pbar-row"><div class="lbl"><span>${c.icon} ${esc(c.name)} <span style="color:var(--ink-soft);font-weight:600;">(Y${c.year})</span></span><span>${p.done}/${p.total}</span></div><div class="ptrack"><div class="pfill" style="width:${p.pct}%;background:${c.color};"></div></div></div>`;}).join('')}
+    ${CATS.map(c=>{const p=catProgress(c); return `<div class="pbar-row"><div class="lbl"><span>${c.icon} ${esc(catName(c))} <span style="color:var(--ink-soft);font-weight:600;">(Y${c.year})</span></span><span>${p.done}/${p.total}</span></div><div class="ptrack"><div class="pfill" style="width:${p.pct}%;background:${c.color};"></div></div></div>`;}).join('')}
   </div>
   `;
 }
@@ -1245,6 +1662,8 @@ function render(){
     </div>
   `;
   if(state.screen==='coach'){ const sc=document.getElementById('chatScroll'); if(sc) sc.scrollTop = sc.scrollHeight; }
+  document.documentElement.lang = state.lang;
+  document.title = t('appTitle');
   saveState();
 }
 render();
