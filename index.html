@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>Ready for Independence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B1F3A;
+  --navy-2:#132A4D;
+  --paper:#F5F3EE;
+  --card:#FFFFFF;
+  --ink:#101828;
+  --ink-soft:#5B6472;
+  --line:#E7E3D9;
+  --amber:#E68A2E;
+  --amber-deep:#C96A16;
+  --teal:#1C8C7C;
+  --coral:#D6553F;
+  --gold:#C99A2E;
+  --ok:#1C8C7C;
+  --warn:#C96A16;
+  --danger:#C0392B;
+  --r-sm:8px;
+  --r-md:14px;
+  --r-lg:22px;
+  --shadow:0 1px 2px rgba(16,24,40,.04), 0 6px 18px rgba(16,24,40,.06);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Manrope',system-ui,-apple-system,sans-serif;
+  background:var(--navy);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior:none;
+}
+h1,h2,h3,h4,.font-display{font-family:'Sora',system-ui,sans-serif;}
+button{font-family:inherit;}
+.app-shell{
+  max-width:460px;
+  margin:0 auto;
+  min-height:100vh;
+  background:var(--paper);
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 0 60px rgba(0,0,0,.35);
+}
+.screen{
+  flex:1;
+  padding:18px 16px 96px;
+  overflow-y:auto;
+}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:var(--navy);
+  color:#fff;
+  padding:14px 16px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:3px solid var(--amber);
+}
+.topbar .brand{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:'Sora',sans-serif;
+  font-weight:700;
+  font-size:15px;
+  letter-spacing:.2px;
+}
+.topbar .brand .flag{
+  width:22px;height:22px;border-radius:6px;
+  background:linear-gradient(135deg,var(--amber),var(--coral));
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+}
+.mode-toggle{
+  font-size:11px;
+  font-weight:700;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.25);
+  color:#fff;
+  padding:6px 10px;
+  border-radius:20px;
+  cursor:pointer;
+  letter-spacing:.3px;
+}
+.mode-toggle.parent-active{background:var(--amber);border-color:var(--amber);color:var(--navy);}
+
+/* Bottom nav */
+.bottomnav{
+  position:sticky;
+  bottom:0;
+  z-index:20;
+  background:var(--navy);
+  display:flex;
+  justify-content:space-around;
+  padding:8px 4px calc(8px + env(safe-area-inset-bottom));
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.navbtn{
+  background:none;border:none;color:rgba(255,255,255,.55);
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-size:10px;font-weight:700;letter-spacing:.2px;
+  padding:6px 8px;border-radius:10px;cursor:pointer;
+  flex:1;
+}
+.navbtn .ic{font-size:19px;}
+.navbtn.active{color:var(--amber);}
+
+/* Cards */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--r-md);
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:var(--shadow);
+}
+.card-flush{padding:0;overflow:hidden;}
+.section-title{
+  font-family:'Sora',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  color:var(--ink-soft);
+  margin:22px 0 10px;
+}
+.section-title:first-child{margin-top:0;}
+
+/* Home header */
+.hello{color:#fff;margin-bottom:14px;}
+.hello h1{font-size:21px;margin:2px 0 2px;color:#fff;}
+.hello .sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+.stat-row{display:flex;gap:10px;margin-bottom:4px;}
+.stat-chip{
+  flex:1;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:var(--r-sm);
+  padding:10px 10px;
+  color:#fff;
+}
+.stat-chip .n{font-family:'Sora',sans-serif;font-weight:800;font-size:17px;}
+.stat-chip .l{font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.4px;}
+
+/* Score ring */
+.score-wrap{display:flex;align-items:center;gap:16px;}
+.ring{
+  width:92px;height:92px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  background:conic-gradient(var(--teal) calc(var(--pct)*1%), #EDEAE0 0);
+  position:relative;
+}
+.ring::before{
+  content:'';position:absolute;width:70px;height:70px;border-radius:50%;background:#fff;
+}
+.ring .val{position:relative;font-family:'Sora',sans-serif;font-weight:800;font-size:22px;color:var(--navy);}
+.ring .val small{display:block;font-size:9px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;}
+
+.xpbar-track{
+  height:8px;background:#EDEAE0;border-radius:20px;overflow:hidden;margin-top:6px;
+}
+.xpbar-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--gold));border-radius:20px;}
+
+.badge-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--navy-2);color:#fff;font-size:11px;font-weight:700;
+  padding:5px 10px;border-radius:20px;
+}
+
+/* Category grid */
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cat-card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:13px;cursor:pointer;box-shadow:var(--shadow);position:relative;
+  border-left:4px solid var(--cat-color,var(--teal));
+}
+.cat-card .ic{font-size:22px;}
+.cat-card .name{font-size:12.5px;font-weight:700;margin-top:6px;line-height:1.25;color:var(--ink);}
+.cat-card .prog{font-size:10px;color:var(--ink-soft);margin-top:6px;}
+.cat-card .tag{
+  position:absolute;top:10px;right:10px;font-size:9px;font-weight:800;color:var(--ink-soft);
+  background:var(--paper);padding:2px 6px;border-radius:6px;
+}
+.mini-track{height:5px;background:#EDEAE0;border-radius:8px;margin-top:5px;overflow:hidden;}
+.mini-fill{height:100%;background:var(--cat-color,var(--teal));}
+
+/* Lesson rows */
+.lesson-row{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;
+}
+.lesson-row:last-child{border-bottom:none;}
+.lstatus{
+  width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;font-weight:800;
+}
+.lstatus.completed{background:var(--teal);color:#fff;}
+.lstatus.pending{background:var(--amber);color:#fff;}
+.lstatus.available{background:#EDEAE0;color:var(--ink-soft);}
+.lesson-row .lt{flex:1;}
+.lesson-row .lt .t{font-weight:700;font-size:13.5px;}
+.lesson-row .lt .x{font-size:11px;color:var(--ink-soft);margin-top:2px;}
+.chev{color:var(--ink-soft);font-size:16px;}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  border:none;border-radius:var(--r-sm);padding:12px 18px;font-weight:700;font-size:13.5px;cursor:pointer;
+  width:100%;
+}
+.btn-primary{background:var(--amber);color:#fff;}
+.btn-primary:active{background:var(--amber-deep);}
+.btn-outline{background:transparent;border:1.5px solid var(--navy);color:var(--navy);}
+.btn-ghost{background:var(--paper);color:var(--ink);border:1px solid var(--line);}
+.btn-sm{padding:8px 12px;font-size:12px;width:auto;}
+.btn-danger-o{background:transparent;border:1.5px solid var(--danger);color:var(--danger);}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+
+/* Lesson detail */
+.backbtn{background:none;border:none;color:var(--navy);font-weight:700;font-size:13px;display:flex;align-items:center;gap:4px;cursor:pointer;padding:4px 0 14px;}
+.lesson-hero{background:var(--navy);color:#fff;border-radius:var(--r-md);padding:18px;margin-bottom:16px;}
+.lesson-hero .k{font-size:11px;color:var(--amber);font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
+.lesson-hero h2{margin:6px 0 4px;font-size:19px;}
+.lesson-hero .xp{font-size:12px;color:rgba(255,255,255,.7);}
+.block-title{font-weight:800;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--amber-deep);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.steps{margin:0;padding:0;list-style:none;}
+.steps li{
+  display:flex;gap:10px;padding:8px 0;font-size:13.5px;line-height:1.45;border-bottom:1px dashed var(--line);
+}
+.steps li:last-child{border-bottom:none;}
+.steps .num{
+  width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.ex-box{background:#FBF6EA;border:1px solid #EFD9A8;border-radius:var(--r-sm);padding:12px;font-size:13px;line-height:1.5;}
+.chk-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;font-size:13.5px;border-bottom:1px solid var(--line);cursor:pointer;}
+.chk-item:last-child{border-bottom:none;}
+.chk-box{width:20px;height:20px;border-radius:6px;border:2px solid var(--ink-soft);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;margin-top:1px;}
+.chk-box.done{background:var(--teal);border-color:var(--teal);}
+.chk-item.done .t{text-decoration:line-through;color:var(--ink-soft);}
+
+/* Missions */
+.mission-card{border-radius:var(--r-md);padding:14px;margin-bottom:12px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);}
+.mission-card .top{display:flex;justify-content:space-between;align-items:flex-start;}
+.mission-card .name{font-weight:700;font-size:13.5px;}
+.mission-card .desc{font-size:12px;color:var(--ink-soft);margin-top:3px;}
+.mission-xp{font-size:11px;font-weight:800;color:var(--amber-deep);white-space:nowrap;}
+
+.badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.badge-tile{
+  aspect-ratio:1;border-radius:var(--r-md);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--card);border:1px solid var(--line);font-size:22px;gap:4px;text-align:center;padding:4px;
+}
+.badge-tile.locked{opacity:.32;filter:grayscale(1);}
+.badge-tile .bn{font-size:8.5px;font-weight:700;line-height:1.15;}
+
+/* Chat */
+.chat-scroll{display:flex;flex-direction:column;gap:10px;padding-bottom:8px;}
+.bubble{max-width:82%;padding:10px 13px;border-radius:16px;font-size:13.5px;line-height:1.45;}
+.bubble.coach{background:var(--navy);color:#fff;border-bottom-left-radius:4px;align-self:flex-start;}
+.bubble.me{background:var(--amber);color:#fff;border-bottom-right-radius:4px;align-self:flex-end;}
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px;}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:7px 12px;font-size:11.5px;font-weight:700;cursor:pointer;color:var(--navy);}
+.chatbar{display:flex;gap:8px;position:sticky;bottom:0;background:var(--paper);padding-top:8px;}
+.chatbar input{flex:1;border:1.5px solid var(--line);border-radius:20px;padding:11px 14px;font-size:13.5px;font-family:inherit;}
+.chatbar button{width:42px;height:42px;border-radius:50%;background:var(--amber);color:#fff;border:none;font-size:16px;cursor:pointer;flex-shrink:0;}
+
+/* Roadmap */
+.timeline{position:relative;padding-left:22px;}
+.timeline::before{content:'';position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:var(--line);}
+.tl-item{position:relative;padding-bottom:20px;}
+.tl-dot{position:absolute;left:-22px;top:2px;width:14px;height:14px;border-radius:50%;background:var(--teal);border:3px solid #fff;box-shadow:0 0 0 2px var(--teal);}
+.tl-dot.now{background:var(--amber);box-shadow:0 0 0 2px var(--amber);}
+.tl-dot.future{background:var(--line);box-shadow:0 0 0 2px var(--line);}
+.tl-item .when{font-size:10.5px;font-weight:800;color:var(--ink-soft);text-transform:uppercase;}
+.tl-item .what{font-size:13.5px;font-weight:700;margin:2px 0 3px;}
+.tl-item .detail{font-size:12px;color:var(--ink-soft);line-height:1.4;}
+
+/* Parent dashboard */
+.pbar-row{margin-bottom:12px;}
+.pbar-row .lbl{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px;}
+.pbar-row .lbl span:last-child{color:var(--ink-soft);font-weight:600;}
+.ptrack{height:8px;background:#EDEAE0;border-radius:20px;overflow:hidden;}
+.pfill{height:100%;border-radius:20px;}
+
+.verify-row{border:1px solid var(--line);border-radius:var(--r-sm);padding:11px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.verify-row .vt{font-weight:700;font-size:13px;}
+.verify-row .vs{font-size:11px;color:var(--ink-soft);}
+.vbtns{display:flex;gap:6px;}
+.iconbtn{width:34px;height:34px;border-radius:8px;border:none;font-size:15px;cursor:pointer;}
+.iconbtn.ok{background:var(--teal);color:#fff;}
+.iconbtn.no{background:#F3E4E1;color:var(--danger);}
+
+.formfield{margin-bottom:12px;}
+.formfield label{display:block;font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px;}
+.formfield select, .formfield input, .formfield textarea{
+  width:100%;border:1.5px solid var(--line);border-radius:var(--r-sm);padding:10px 11px;font-size:13.5px;font-family:inherit;background:#fff;
+}
+
+.toast{
+  position:fixed;left:50%;bottom:96px;transform:translateX(-50%);
+  background:var(--navy);color:#fff;padding:12px 18px;border-radius:20px;font-size:13px;font-weight:700;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:100;display:flex;align-items:center;gap:8px;
+  max-width:88%;text-align:center;
+  animation:toastIn .25s ease-out;
+}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,10px);}to{opacity:1;transform:translate(-50%,0);}}
+
+.empty{text-align:center;padding:30px 10px;color:var(--ink-soft);font-size:13px;}
+.pill-year{display:inline-block;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:var(--navy);color:#fff;margin-bottom:8px;}
+
+::-webkit-scrollbar{width:0;height:0;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+/* ============ DATA ============ */
+const CATS = [
+  {id:'hygiene', icon:'🧼', name:'Personal Hygiene & Self-Care', color:'#1C8C7C', year:1,
+    lessons:[
+      {id:'hyg1', title:'Daily Hygiene Routine', xp:30,
+        why:"Nobody's going to remind you to shower or brush your teeth at 3,000 miles away — this is the baseline for health and how people treat you.",
+        steps:['Build a 2-minute AM routine: brush, wash face, deodorant.','Build a 5-minute PM routine: brush, floss, shower every 1-2 days.','Keep a small dopp kit stocked so you never run out mid-week.','Set 2 recurring phone reminders for week one, then drop them.'],
+        example:"College roommate story: guys who skip showers for days become 'that roommate.' It's 5 minutes that protects your reputation and your health.",
+        practice:'Run your full AM+PM routine solo for 5 days without a parent reminder.',
+        challenge:'Restock your own dopp kit before it runs out — no one tells you it\'s empty.',
+        checklist:['AM routine done unprompted x5 days','PM routine done unprompted x5 days','Dopp kit restocked independently']},
+      {id:'hyg2', title:'Skincare & Grooming Basics', xp:25,
+        why:'Acne, sun, and dry winter air are new opponents once you\'re managing your own skin and haircuts.',
+        steps:['Learn your skin type and pick 1 cleanser + 1 moisturizer.','Know how to treat a breakout without overdoing products.','Book your own haircut appointment (call or app).','Learn basic nail and beard/shave care if relevant.'],
+        example:'A $9 drugstore cleanser + moisturizer beats a 10-step routine you\'ll never keep up with.',
+        practice:'Do your skincare routine daily for 2 weeks and journal any changes.',
+        challenge:'Book and attend a haircut completely on your own, including payment/tip.',
+        checklist:['Skincare kit assembled','2-week routine streak logged','Self-booked haircut completed']},
+    ]},
+  {id:'laundry', icon:'🧺', name:'Laundry & Clothing Care', color:'#2E6F9E', year:1,
+    lessons:[
+      {id:'lau1', title:'Do Your Own Laundry', xp:35,
+        why:'Ruining a $60 hoodie by mixing loads is a rite of passage you can skip. Clean clothes = confidence and health.',
+        steps:['Sort by color (darks/lights/delicates) and fabric weight.','Read the care label symbols before washing anything new.','Pick the right detergent amount and cycle/temperature.','Run the washer, then transfer promptly to avoid mildew smell.','Dry on correct heat setting; air-dry delicates.','Fold or hang immediately — don\'t live out of the basket.'],
+        example:'Red shirt + white socks on hot = pink socks forever. Cold wash + separate colors avoids this classic mistake.',
+        practice:'Do one full laundry cycle solo: wash, dry, fold, put away.',
+        challenge:'Do 3 full laundry cycles across 3 different weeks with zero help.',
+        checklist:['Sorted correctly','Read a care label aloud/explained it','Completed a wash+dry+fold+put-away cycle','Repeated solo 3 weeks running']},
+      {id:'lau2', title:'Iron & Fold Like a Pro', xp:20,
+        why:'Job interviews, school presentations, and first impressions need a shirt that isn\'t a wrinkled ball.',
+        steps:['Set iron heat to match fabric (check the label).','Iron a collared shirt: collar, yoke, sleeves, body.','Learn the 30-second t-shirt fold and pant fold.','Know a no-iron trick: hang in a steamy bathroom.'],
+        example:'A crisp shirt for a school interview signals effort before you say a word.',
+        practice:'Iron one collared shirt and fold a full drawer of clothes.',
+        challenge:'Prep a full outfit (ironed + folded) the night before an important day, unprompted.',
+        checklist:['Ironed a shirt without burning it','Used the 30-second fold method','Prepped outfit night-before once']},
+    ]},
+  {id:'cooking', icon:'🍳', name:'Cooking Basic Meals', color:'#C96A16', year:1,
+    lessons:[
+      {id:'cook1', title:'5 Meals You Can Always Cook', xp:40,
+        why:'Cafeteria food gets old fast, and takeout drains a student budget. Five reliable meals = you never go hungry or broke.',
+        steps:['Master eggs 3 ways (scrambled, fried, omelet).','Learn a one-pan stir fry with rice.','Learn pasta + jarred sauce + protein.','Learn a sheet-pan chicken + vegetables bake.','Learn a simple soup or grain bowl.'],
+        example:'A $6 batch of stir fry makes 3 meals — cheaper and healthier than one delivery order.',
+        practice:'Cook each of the 5 meals once, from raw ingredients, without a video open.',
+        challenge:'Cook a full week of dinners (5 nights) for yourself, from a grocery list you made.',
+        checklist:['Cooked all 5 base meals once','Can name 3 without a recipe','Completed a self-planned 5-night dinner week']},
+      {id:'cook2', title:'Kitchen Safety & Cleanup', xp:20,
+        why:'Fires, food poisoning, and gross shared kitchens are avoidable with 4-5 habits.',
+        steps:['Know knife safety basics and safe food temps.','Never leave the stove/oven unattended.','Clean as you cook — not one giant pile after.','Store leftovers safely and know when to toss food.'],
+        example:'Undercooked chicken is the #1 rookie mistake — always check it\'s no longer pink and juices run clear.',
+        practice:'Cook a full meal leaving the kitchen spotless within 10 minutes of finishing.',
+        challenge:'Host a "cook for someone" night — feed a friend or family member and clean up solo.',
+        checklist:['Explained safe food temps for chicken/beef','Cooked with zero mess left behind','Fed someone else and cleaned up']},
+    ]},
+  {id:'grocery', icon:'🛒', name:'Grocery Shopping', color:'#1C8C7C', year:1,
+    lessons:[
+      {id:'gro1', title:'Plan & Shop for a Week', xp:30,
+        why:'Wandering the store hungry with no list is how students blow $80 on snacks and still have nothing for dinner.',
+        steps:['Plan meals for the week before you shop.','Write a list organized by store section.','Set a budget before you walk in.','Shop the perimeter first (produce, dairy, meat), then aisles.'],
+        example:'A $35 planned list feeds you for a week; an unplanned trip often costs more and leaves gaps.',
+        practice:'Plan and execute one full week of grocery shopping on a set budget.',
+        challenge:'Shop for 2 weeks straight, tracking actual spend vs your budget.',
+        checklist:['Made a meal plan before shopping','Stuck to a written list','Hit budget 2 weeks running']},
+      {id:'gro2', title:'Read Labels & Compare Prices', xp:20,
+        why:'Brand-name isn\'t always better, and nutrition labels help you eat well on a tight budget.',
+        steps:['Compare unit price, not just sticker price.','Check nutrition labels for protein/sugar/sodium.','Know store-brand vs name-brand tradeoffs.','Spot when "on sale" isn\'t actually a deal.'],
+        example:'A bigger box at a higher unit price is a common trap — always check the "per oz" tag on the shelf.',
+        practice:'Compare 5 items by unit price and pick the smarter buy each time.',
+        challenge:'Cut your weekly grocery bill by 15% using label/price comparison alone.',
+        checklist:['Explained unit pricing','Read 5 nutrition labels correctly','Reduced spend by 15% one week']},
+    ]},
+  {id:'budget', icon:'💰', name:'Budgeting & Personal Finance', color:'#C99A2E', year:1,
+    lessons:[
+      {id:'bud1', title:'Build Your First Monthly Budget', xp:40,
+        why:'Money runs out fast when no one\'s watching. A simple budget means you decide where it goes, not surprise it\'s gone.',
+        steps:['List all income (allowance, job, gifts).','List fixed costs (phone, subscriptions) and variable costs (food, fun).','Use the 50/30/20 rule as a starting split: needs/wants/savings.','Track spending for 2 weeks and compare to plan.'],
+        example:'A $200/month allowance split 50/30/20 = $100 needs, $60 wants, $40 saved — automatic, no guesswork.',
+        practice:'Build a real budget in a spreadsheet or notes app using your actual numbers.',
+        challenge:'Track every dollar spent for one full month against your budget.',
+        checklist:['Budget created with real numbers','2-week tracking completed','Full month tracked with <10% variance']},
+      {id:'bud2', title:'Needs vs Wants Decision Framework', xp:20,
+        why:'Every purchase is a tradeoff. Knowing the difference between needs and wants prevents "where did my money go" moments.',
+        steps:['Define needs (food, transit, essentials) vs wants (games, eating out).','Use a 24-hour rule before non-essential purchases over $20.','Ask: does this move me toward a goal or just feel good for a day?'],
+        example:'Waiting 24 hours before buying new sneakers kills half of impulse buys.',
+        practice:'Apply the 24-hour rule to 3 real purchase decisions this month.',
+        challenge:'Go one full month with zero impulse buys over $20.',
+        checklist:['Can sort 10 sample items into needs/wants correctly','Applied 24-hour rule 3x','One month no-impulse-buy streak']},
+    ]},
+  {id:'banking', icon:'🏦', name:'Banking & Digital Payments', color:'#2E6F9E', year:1,
+    lessons:[
+      {id:'bank1', title:'Open & Manage a US Bank Account', xp:35,
+        why:'You\'ll need a US checking account for rent, food, and everyday life — and to know how to actually read it.',
+        steps:['Understand checking vs savings accounts.','Learn how to read a bank statement and spot errors.','Set up mobile check deposit and transfers.','Understand overdraft fees and how to avoid them.'],
+        example:'A single overdraft fee can be $35 — knowing your real balance (not "available balance") prevents it.',
+        practice:'Review a sample bank statement and correctly identify 5 transaction types.',
+        challenge:'Manage a real or practice account for a month with zero fees incurred.',
+        checklist:['Explained checking vs savings','Read a statement correctly','Zero-fee month completed']},
+      {id:'bank2', title:'Cards, Apps & Avoiding Fraud', xp:25,
+        why:'Debit cards, Venmo/Zelle, and phishing scams are daily reality — one bad tap can cost real money.',
+        steps:['Know debit vs credit and when to use each.','Set up Venmo/Zelle/Cash App safely.','Learn to spot phishing texts/emails asking for codes or logins.','Know what to do immediately if a card is lost or compromised.'],
+        example:'A text saying "your bank needs you to verify" with a link is almost always a scam — banks don\'t ask that way.',
+        practice:'Identify 5 real vs fake "bank alert" examples correctly.',
+        challenge:'Set up and safely use a peer-payment app for a real transaction.',
+        checklist:['Spotted all 5 phishing examples','App set up with security PIN/biometrics','Explained lost-card action plan']},
+    ]},
+  {id:'time', icon:'⏰', name:'Time Management', color:'#D6553F', year:1,
+    lessons:[
+      {id:'time1', title:'Build a Weekly Schedule', xp:30,
+        why:'No parent will wake you up or tell you when to study. Your calendar becomes your parent.',
+        steps:['Block class/study time first, then chores, then social time.','Use one calendar app for everything — no scattered sticky notes.','Review and reset the schedule every Sunday.','Build in buffer time for the unexpected.'],
+        example:'Blocking "9-10pm laundry" like a real appointment makes it actually happen.',
+        practice:'Build and follow a full weekly schedule for 7 days.',
+        challenge:'Run your own schedule for 3 weeks straight with zero missed commitments.',
+        checklist:['Weekly schedule built in an app','Followed it for 7 days','3-week streak with no missed items']},
+      {id:'time2', title:'Beat Procrastination System', xp:20,
+        why:'Deadlines pile up fast in a new country with no one checking your homework.',
+        steps:['Break big tasks into 25-minute focus blocks (Pomodoro).','Do the hardest task first, not last.','Remove phone distractions during focus blocks.','Reward yourself after finishing, not before.'],
+        example:'A "3-page essay" feels impossible; "one paragraph, 25 minutes" feels doable — and it\'s the same task.',
+        practice:'Use the Pomodoro method for 5 study sessions.',
+        challenge:'Finish a real assignment 2 full days before its deadline.',
+        checklist:['5 Pomodoro sessions logged','Explained "eat the frog" first-task rule','Finished something 2 days early']},
+    ]},
+  {id:'academic', icon:'📚', name:'Academic Planning', color:'#0B1F3A', year:1,
+    lessons:[
+      {id:'aca1', title:'Track Assignments & Deadlines', xp:30,
+        why:'US schools expect self-tracking — no one calls home about a missing assignment like some schools do.',
+        steps:['Set up one tracker: planner app or notebook, not both.','Log every assignment the day it\'s given, with due date.','Check the tracker daily, same time each day.','Flag anything due in the next 48 hours.'],
+        example:'Syllabus week is when most missed deadlines start — log everything on day one.',
+        practice:'Track a real week of assignments across all classes.',
+        challenge:'Go a full grading period with zero missed deadlines.',
+        checklist:['Tracker set up','One full week logged accurately','Zero missed deadlines for a term']},
+      {id:'aca2', title:'Study System That Works', xp:25,
+        why:'Studying "for a while" isn\'t a system — active recall and spacing actually work.',
+        steps:['Use active recall (self-quiz) instead of re-reading notes.','Space review sessions across days, not one cram night.','Find a distraction-free study spot on campus.','Ask a teacher/TA a question when stuck, don\'t just guess.'],
+        example:'Re-reading a chapter feels productive but tests worse than closing the book and quizzing yourself.',
+        practice:'Use active recall to study for one real quiz or test.',
+        challenge:'Apply spaced review across a full week before a major test — and track the grade result.',
+        checklist:['Explained active recall vs re-reading','Used it for a real test','Asked a teacher a clarifying question unprompted']},
+    ]},
+  {id:'transit', icon:'🚌', name:'Public Transportation', color:'#2E6F9E', year:2,
+    lessons:[
+      {id:'tra1', title:'Read Transit Maps & Apps', xp:30,
+        why:'No family driver in the US — buses, trains, and rideshare apps are how you get anywhere.',
+        steps:['Install and set up a transit app (Google/Apple Maps or local transit app).','Learn to read a route map and transfer points.','Understand fare cards/passes and how to reload them.','Plan a trip with a backup route in case of delay.'],
+        example:'Missing one bus shouldn\'t ruin your day — always know the next departure time.',
+        practice:'Plan a real multi-stop transit route using an app.',
+        challenge:'Take public transit somewhere new, solo, with zero help.',
+        checklist:['Transit app set up','Planned a route with a backup','Completed a solo new-route trip']},
+      {id:'tra2', title:'Ride Solo With Confidence', xp:20,
+        why:'Riding alone in an unfamiliar city needs street smarts, not just directions.',
+        steps:['Sit near the driver or in a visible car during off-hours.','Keep valuables out of sight; know your stop before boarding.','Know what to do if you miss your stop or get lost.','Save emergency contacts and offline maps for no-signal areas.'],
+        example:'Downloading an offline map before a trip saves you when your phone loses signal underground.',
+        practice:'Ride transit during a busier and a quieter time and note the difference in approach.',
+        challenge:'Navigate an unplanned reroute (missed stop, delay) and recover without panicking or calling home first.',
+        checklist:['Safety habits demonstrated','Offline map saved','Handled a real reroute independently']},
+    ]},
+  {id:'travel', icon:'✈️', name:'Travel Skills & Airport Navigation', color:'#C96A16', year:2,
+    lessons:[
+      {id:'trv1', title:'Pack & Prep for a Flight', xp:35,
+        why:'You\'ll fly internationally alone — packing and prep mistakes get expensive or stressful fast.',
+        steps:['Check baggage weight/size limits before packing.','Pack a smart carry-on: documents, chargers, one change of clothes.','Check in online and screenshot/print your boarding pass.','Know passport/visa document requirements cold.'],
+        example:'A carry-on with a change of clothes saves you if checked luggage is delayed.',
+        practice:'Pack a full carry-on + checked bag under airline limits for a practice trip.',
+        challenge:'Complete a real trip\'s pre-flight prep (check-in, documents, packing) entirely solo.',
+        checklist:['Packed within weight/size limits','Checked in independently','All documents verified before travel day']},
+      {id:'trv2', title:'Navigate the Airport Solo', xp:30,
+        why:'Big US airports are confusing on a good day — you need a calm system, not luck.',
+        steps:['Arrive with proper buffer time (2-3hrs international).','Know the security process: liquids, laptop, shoes rules.','Read gate/terminal signage and app notifications for changes.','Know what to do if a flight is delayed or a gate changes.'],
+        example:'A gate change 30 minutes before boarding is normal — check the board, don\'t just trust your original ticket.',
+        practice:'Walk through a mock airport-day timeline and identify each step.',
+        challenge:'Navigate a real flight (domestic or international) completely independently.',
+        checklist:['Explained security prep correctly','Handled a mock gate-change scenario','Completed one real solo flight']},
+    ]},
+  {id:'dorm', icon:'🏠', name:'Apartment & Dorm Living', color:'#1C8C7C', year:2,
+    lessons:[
+      {id:'dorm1', title:'Set Up Your Dorm Room', xp:25,
+        why:'Your room is your base of operations — organized from day one means less stress all year.',
+        steps:['Make a move-in checklist (bedding, storage, basic tools).','Set up a cleaning schedule for a small space.','Know your building\'s rules (quiet hours, guests, fire safety).','Learn basic troubleshooting: wifi reset, fuse box, maintenance request.'],
+        example:'Submitting a maintenance request the right way (not texting a friend to fix it) gets things fixed fast.',
+        practice:'Set up and maintain an organized space for 2 weeks.',
+        challenge:'Submit a real maintenance/facilities request and follow it through to resolution.',
+        checklist:['Move-in checklist completed','Cleaning schedule followed 2 weeks','Handled one real maintenance issue']},
+      {id:'dorm2', title:'Living With Roommates', xp:25,
+        why:'Sharing space with strangers is a top source of student stress — and a skill you can practice now.',
+        steps:['Set shared expectations early (chores, guests, noise, quiet hours).','Practice direct, calm conflict conversations, not passive-aggressive notes.','Split shared costs and chores fairly and track them.','Know when to involve an RA/mediator vs handle it yourself.'],
+        example:'"Hey, can we agree on quiet hours after 11?" beats silently fuming for a month.',
+        practice:'Have a real roommate-style conversation (with a sibling, friend, or parent role-playing) about shared expectations.',
+        challenge:'Resolve a real disagreement about shared space calmly and directly.',
+        checklist:['Practiced a boundary-setting conversation','Split a shared cost/chore fairly','Resolved one real conflict without escalation']},
+    ]},
+  {id:'health', icon:'🩺', name:'Health & Medical Awareness', color:'#D6553F', year:2,
+    lessons:[
+      {id:'hea1', title:'Book & Attend a Doctor Visit', xp:35,
+        why:'No parent to call the clinic — you need to describe symptoms and manage your own care.',
+        steps:['Know your insurance card info and how to find in-network providers.','Call/book an appointment and describe symptoms clearly.','Know your medical history: allergies, medications, past conditions.','Ask questions and understand instructions before leaving.'],
+        example:'"It hurts" isn\'t enough — "sharp pain, lower right side, started 2 days ago" gets you better care.',
+        practice:'Role-play booking an appointment and describing a symptom clearly.',
+        challenge:'Book and attend a real appointment (checkup, dentist, etc.) managing all communication yourself.',
+        checklist:['Insurance info memorized/saved','Role-play completed','Real appointment self-managed']},
+      {id:'hea2', title:'Handle a Minor Illness or Injury', xp:25,
+        why:'A cold, cut, or upset stomach shouldn\'t turn into a crisis when you\'re on your own.',
+        steps:['Stock a basic first aid + medicine kit.','Know safe OTC medication dosing and when to see a doctor vs rest.','Know urgent care vs ER vs "just rest" decision points.','Keep emergency numbers and student health center info saved.'],
+        example:'A 101°F fever with rest and fluids is different from a 104°F fever — know the lines that mean "get help now."',
+        practice:'Assemble a first aid kit and explain when to use each item.',
+        challenge:'Handle one real minor illness/injury start to finish with correct self-care decisions.',
+        checklist:['Kit assembled and explained','Decision-tree quiz passed','One real situation self-managed correctly']},
+    ]},
+  {id:'social', icon:'💬', name:'Social & Communication Skills', color:'#C99A2E', year:1,
+    lessons:[
+      {id:'soc1', title:'Small Talk & Making Friends', xp:25,
+        why:'New school, new country, zero built-in friend group — social skills are the fastest way to feel at home.',
+        steps:['Learn 5 easy conversation openers for new people.','Practice active listening: ask follow-ups, don\'t just wait to talk.','Join one club/activity in the first month to meet people fast.','Follow up with people you meet — invite, don\'t just wait.'],
+        example:'"What made you choose this school?" opens a real conversation better than "hi."',
+        practice:'Start a conversation with 3 new people this week and note what worked.',
+        challenge:'Join a club or group activity and attend 3 sessions.',
+        checklist:['Used 3 openers on real people','Joined one activity','Attended 3 sessions']},
+      {id:'soc2', title:'Ask For Help Confidently', xp:20,
+        why:'Being too proud to ask for help is the #1 thing that isolates international students.',
+        steps:['Identify who to ask: teacher, RA, advisor, classmate.','Practice a clear, specific ask (not vague "I\'m struggling").','Follow up with a thank-you — it builds the relationship.','Know it\'s normal and expected to ask; US culture rewards it.'],
+        example:'"Can you clarify question 3? I\'m not sure what it\'s asking" gets a fast, useful answer.',
+        practice:'Ask a real, specific question to a teacher or advisor this week.',
+        challenge:'Ask for help on something you\'d normally avoid asking about (academic, social, or logistical).',
+        checklist:['Identified the right person to ask 3x','Asked one specific question','Completed one "avoided" ask']},
+    ]},
+  {id:'safety', icon:'🛡️', name:'Safety & Emergency Preparedness', color:'#C0392B', year:2,
+    lessons:[
+      {id:'saf1', title:'Emergency Contacts & Plans', xp:30,
+        why:'In an emergency you won\'t have time to think — the plan has to already exist.',
+        steps:['Save ICE (In Case of Emergency) contacts in your phone lock screen.','Know your school\'s emergency/security number, not just 911.','Share your location with a trusted contact when traveling.','Know your dorm/building\'s fire and evacuation plan.'],
+        example:'Lock-screen medical ID means paramedics can see allergies even if your phone is locked.',
+        practice:'Set up ICE contacts and medical ID on your phone.',
+        challenge:'Walk your evacuation route in person and time it.',
+        checklist:['ICE contacts set up','Location sharing configured','Evacuation route walked and timed']},
+      {id:'saf2', title:'Handle a Lockout, Scam, or Accident', xp:25,
+        why:'These small crises happen to everyone eventually — panic makes them worse, a plan makes them a non-event.',
+        steps:['Know who to call if locked out (RA, landlord, locksmith).','Recognize common scams targeting students (fake officials, too-good deals).','Know basic accident steps: safety first, then document, then report.','Keep a small emergency fund for exactly these moments.'],
+        example:'A caller claiming to be "immigration" demanding payment by gift card is always a scam — hang up, verify independently.',
+        practice:'Role-play 2 scam scenarios and correctly identify the red flags.',
+        challenge:'Handle a real minor mishap (lockout, lost item, etc.) using the plan without panicking or calling home first.',
+        checklist:['2 scam scenarios correctly flagged','Emergency fund set aside','One real mishap self-handled']},
+    ]},
+  {id:'vehicle', icon:'🚗', name:'Basic Vehicle Knowledge', color:'#0B1F3A', year:2,
+    lessons:[
+      {id:'veh1', title:'Rideshare & Basic Car Sense', xp:20,
+        why:'Even without a license, you\'ll use rideshares and cars constantly — know the basics of staying safe and smart.',
+        steps:['Verify driver/plate match before entering a rideshare.','Share your trip status with a friend/family member.','Know basic seatbelt/safety habits, always, no exceptions.','Understand rough costs so you can budget for rides.'],
+        example:'"What\'s my name?" before getting in confirms you\'re entering the right car, not a lookalike.',
+        practice:'Book a real or practice rideshare and go through the verification steps out loud.',
+        challenge:'Take 3 rideshare trips independently, sharing trip status each time.',
+        checklist:['Verification habit demonstrated','Trip sharing set up','3 independent trips completed']},
+      {id:'veh2', title:'What To Do If You\'re a Passenger in an Accident', xp:20,
+        why:'Rare, but knowing the steps removes panic if it ever happens.',
+        steps:['Check yourself and others for injuries first.','Move to safety if possible; call 911 if needed.','Exchange info if appropriate and take photos.','Call a trusted contact and follow up with school/insurance if relevant.'],
+        example:'Photos of the scene before anything moves protect you later — always document first.',
+        practice:'Walk through the accident-response steps out loud until you can recite them from memory.',
+        challenge:'Teach the steps back to a parent or friend without looking at notes.',
+        checklist:['Recited steps from memory','Explained photo/documentation step','Taught someone else the process']},
+    ]},
+  {id:'culture', icon:'🇺🇸', name:'American Culture & Daily Life', color:'#2E6F9E', year:2,
+    lessons:[
+      {id:'cul1', title:'Classroom & Social Norms', xp:25,
+        why:'Classroom participation, casual teacher relationships, and directness are different from what you\'re used to — knowing the norms avoids awkward surprises.',
+        steps:['Understand class participation is often graded — silence isn\'t "respectful," it can look disengaged.','Learn appropriate ways to address teachers (often first-name in some settings).','Understand personal space and casual greetings (fist bump, "what\'s up").','Learn academic honesty norms — citation and plagiarism rules are strict.'],
+        example:'Raising your hand to disagree respectfully with a teacher\'s point is normal and often rewarded in US classrooms.',
+        practice:'Practice speaking up once in a group/class setting this week.',
+        challenge:'Contribute a real opinion or question in class discussion without being called on first.',
+        checklist:['Explained participation norms','Practiced speaking up once','Contributed unprompted in a real class']},
+      {id:'cul2', title:'Tipping, Small Talk & Etiquette', xp:20,
+        why:'Tipping mistakes and small etiquette misses are the fastest way to feel like an outsider — a few rules fix most of it.',
+        steps:['Learn standard tipping ranges (restaurants ~18-20%, rideshare, delivery).','Practice casual "how\'s it going" small talk — brief reply, not a full report.','Learn line/queue etiquette and personal space norms.','Understand direct communication style vs indirect — Americans often say what they mean plainly.'],
+        example:'"How\'s it going?" usually expects "good, you?" — not a real status update.',
+        practice:'Calculate correct tips for 3 sample restaurant bills.',
+        challenge:'Handle one real restaurant or service tipping situation solo, correctly.',
+        checklist:['3 tip calculations correct','Small talk practiced','One real tipping situation handled']},
+    ]},
+];
+
+const ALL_LESSONS = CATS.flatMap(c => c.lessons.map(l => ({...l, catId:c.id, catName:c.name, catColor:c.color, catIcon:c.icon})));
+
+const SPECIAL_BADGES = [
+  {id:'streak7', icon:'🔥', name:'7-Day Streak', test:s=>s.streak>=7},
+  {id:'score50', icon:'📈', name:'Halfway There', test:s=>independenceScore(s)>=50},
+  {id:'score80', icon:'🏆', name:'Independence Elite', test:s=>independenceScore(s)>=80},
+  {id:'firstlesson', icon:'🎯', name:'First Steps', test:s=>Object.values(s.lessonStatus).filter(v=>v==='completed').length>=1},
+  {id:'mission1', icon:'⭐', name:'Mission Complete', test:s=>s.missionsCompleted>=1},
+];
+
+const MISSION_POOL = [
+  {id:'m1', name:'Laundry Week', desc:'Complete 2 full laundry cycles this week', xp:40, cat:'laundry', target:2},
+  {id:'m2', name:'Budget Check-In', desc:'Log every expense for 5 days straight', xp:35, cat:'budget', target:5},
+  {id:'m3', name:'Cook 3 Dinners', desc:'Cook dinner from scratch 3 nights this week', xp:45, cat:'cooking', target:3},
+  {id:'m4', name:'Social Streak', desc:'Start a conversation with someone new 3 times', xp:30, cat:'social', target:3},
+  {id:'m5', name:'Study Blocks', desc:'Complete 5 focused Pomodoro study sessions', xp:35, cat:'time', target:5},
+  {id:'m6', name:'Solo Navigation', desc:'Plan and complete one solo transit trip', xp:40, cat:'transit', target:1},
+];
+
+/* ============ STATE ============ */
+let state = {
+  teenName: 'Allen',
+  totalXP: 0,
+  streak: 4,
+  screen: 'home',
+  parentMode: false,
+  activeCat: null,
+  activeLesson: null,
+  lessonStatus: {},   // lessonId -> 'available' | 'pending' | 'completed'
+  checklistState: {}, // lessonId -> Set-like obj of done indices
+  badgesEarned: [],
+  missionsCompleted: 0,
+  activeMissions: [MISSION_POOL[0], MISSION_POOL[2], MISSION_POOL[4]].map(m=>({...m, progress:0})),
+  chat: [
+    {who:'coach', text:"Hey Allen! I'm Coach — your AI mentor for this whole journey. Ask me anything about a skill, or tap a quick question below."}
+  ],
+  milestones: [
+    {id:'ms1', title:'Cook 5 solo dinners', date:'2026-12-01', done:false},
+    {id:'ms2', title:'Manage full month budget unaided', date:'2027-03-01', done:false},
+    {id:'ms3', title:'Complete a solo flight itinerary', date:'2027-11-01', done:false},
+  ],
+  pendingParentTasks: [], // lessonIds awaiting approval
+  toast: null,
+};
+ALL_LESSONS.forEach(l => state.lessonStatus[l.id] = 'available');
+
+function independenceScore(s){
+  const total = ALL_LESSONS.length;
+  const done = Object.values(s.lessonStatus).filter(v=>v==='completed').length;
+  return Math.round((done/total)*100);
+}
+function levelInfo(xp){
+  const level = Math.floor(xp/100)+1;
+  const into = xp%100;
+  let title='Rookie';
+  if(level>=18) title='Master';
+  else if(level>=13) title='Independent';
+  else if(level>=8) title='Operator';
+  else if(level>=4) title='Apprentice';
+  return {level, into, need:100, title};
+}
+function catProgress(cat){
+  const total = cat.lessons.length;
+  const done = cat.lessons.filter(l=>state.lessonStatus[l.id]==='completed').length;
+  return {done, total, pct: Math.round((done/total)*100)};
+}
+function showToast(msg){
+  state.toast = msg;
+  render();
+  setTimeout(()=>{ state.toast=null; render(); }, 2200);
+}
+function checkBadges(){
+  SPECIAL_BADGES.forEach(b=>{
+    if(!state.badgesEarned.includes(b.id) && b.test(state)){
+      state.badgesEarned.push(b.id);
+      showToast('🏅 Badge earned: '+b.name);
+    }
+  });
+  CATS.forEach(c=>{
+    const p = catProgress(c);
+    const bid = 'cat_'+c.id;
+    if(p.pct===100 && !state.badgesEarned.includes(bid)){
+      state.badgesEarned.push(bid);
+      showToast('🏅 Mastery badge: '+c.name);
+    }
+  });
+}
+
+/* ============ ACTIONS ============ */
+function nav(screen){ state.screen=screen; state.activeCat=null; state.activeLesson=null; render(); window.scrollTo?.(0,0); }
+function openCat(id){ state.activeCat=id; state.screen='catDetail'; render(); }
+function openLesson(id){ state.activeLesson=id; state.screen='lessonDetail'; if(!state.checklistState[id]) state.checklistState[id]=[]; render(); }
+function toggleParent(){ state.parentMode=!state.parentMode; state.screen='home'; render(); }
+function toggleChk(lid, idx){
+  const arr = state.checklistState[lid];
+  const i = arr.indexOf(idx);
+  if(i>-1) arr.splice(i,1); else arr.push(idx);
+  render();
+}
+function submitLesson(lid){
+  state.lessonStatus[lid] = 'pending';
+  if(!state.pendingParentTasks.includes(lid)) state.pendingParentTasks.push(lid);
+  showToast('Submitted for parent verification ✔');
+  render();
+}
+function parentApprove(lid, approve){
+  state.pendingParentTasks = state.pendingParentTasks.filter(x=>x!==lid);
+  if(approve){
+    state.lessonStatus[lid] = 'completed';
+    const lesson = ALL_LESSONS.find(l=>l.id===lid);
+    state.totalXP += lesson.xp;
+    state.activeMissions.forEach(m=>{ if(m.cat===lesson.catId) m.progress=Math.min(m.target,m.progress+1); });
+    checkBadges();
+    showToast('Approved — +'+lesson.xp+' XP awarded!');
+  } else {
+    state.lessonStatus[lid] = 'available';
+    showToast('Sent back for another try');
+  }
+  render();
+}
+function assignChallenge(catId, lessonId, note){
+  showToast('Challenge assigned to '+state.teenName+' ✔');
+}
+function addMilestone(title, date){
+  state.milestones.push({id:'ms'+Date.now(), title, date, done:false});
+  render();
+}
+function toggleMilestone(id){
+  const m = state.milestones.find(x=>x.id===id);
+  if(m) m.done = !m.done;
+  render();
+}
+function sendChat(text){
+  if(!text.trim()) return;
+  state.chat.push({who:'me', text});
+  const reply = coachReply(text);
+  state.chat.push({who:'coach', text:reply});
+  render();
+  setTimeout(()=>{ const sc=document.getElementById('chatScroll'); if(sc) sc.scrollTop=sc.scrollHeight; },30);
+}
+function coachReply(text){
+  const t = text.toLowerCase();
+  if(t.includes('budget')||t.includes('money')||t.includes('save')) return "Start with the 50/30/20 split: 50% needs, 30% wants, 20% savings. Check the Budgeting lesson in the Academy — the first task builds your real budget.";
+  if(t.includes('laundry')) return "Laundry rule #1: separate colors and check the tag before washing anything new and dark or bright. Head to Laundry & Clothing Care to run through it step by step.";
+  if(t.includes('cook')||t.includes('food')||t.includes('meal')) return "Master 5 go-to meals and you'll never be stuck. Eggs, stir fry, pasta, sheet-pan bake, and a soup/bowl covers most weeks. Check Cooking Basic Meals.";
+  if(t.includes('nervous')||t.includes('scared')||t.includes('worried')||t.includes('anxious')) return "Totally normal — everyone feels that before a big change. Pick one small skill to nail this week instead of thinking about all of it at once. What's one thing you could practice today?";
+  if(t.includes('friend')||t.includes('social')||t.includes('lonely')) return "Fastest way to build friends abroad: join one club in your first month and show up 3 times, even if it feels awkward at first. Check Social & Communication Skills for openers that actually work.";
+  if(t.includes('score')||t.includes('independence')) return 'Your Independence Score right now is '+independenceScore(state)+'%. It moves whenever a parent-verified task gets completed. Want a suggestion for what to tackle next?';
+  if(t.includes('next')||t.includes('what should i')||t.includes('suggest')) return suggestNext();
+  if(t.includes('streak')) return 'Your current streak is '+state.streak+' days. Keep showing up daily — even a 2-minute check-in on the app keeps it alive.';
+  if(t.includes('badge')) return "You've earned "+state.badgesEarned.length+' badges so far. Category mastery badges unlock when you finish both lessons in a category — check your Profile tab.';
+  return "Good question. Tell me a skill area — laundry, cooking, budgeting, transit, social, or safety — and I'll break it down simply. Or ask 'what should I learn next?' and I'll suggest something.";
+}
+function suggestNext(){
+  const notDone = ALL_LESSONS.filter(l=>state.lessonStatus[l.id]!=='completed');
+  if(notDone.length===0) return "You've completed everything in the Academy — seriously impressive. Time to go deeper on real-world practice challenges.";
+  const pick = notDone[0];
+  return 'I\'d suggest "'+pick.title+'" in '+pick.catName+' next — it\'s worth '+pick.xp+' XP and builds directly toward your Year '+ (CATS.find(c=>c.id===pick.catId).year) +' goals.';
+}
+
+/* ============ RENDER HELPERS ============ */
+function esc(s){ return (s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function TopBar(){
+  return `<div class="topbar">
+    <div class="brand"><div class="flag">🎓</div> Ready for Independence</div>
+    <button class="mode-toggle ${state.parentMode?'parent-active':''}" onclick="toggleParent()">${state.parentMode? '👨‍👩‍👦 Parent Mode':'Switch to Parent'}</button>
+  </div>`;
+}
+function BottomNav(){
+  if(state.parentMode) return '';
+  const items = [
+    {id:'home', ic:'🏠', l:'Home'},
+    {id:'academy', ic:'🎯', l:'Academy'},
+    {id:'missions', ic:'🚀', l:'Missions'},
+    {id:'coach', ic:'🤖', l:'Coach'},
+    {id:'profile', ic:'👤', l:'Profile'},
+  ];
+  return `<div class="bottomnav">${items.map(i=>`
+    <button class="navbtn ${state.screen===i.id || (i.id==='academy'&&(state.screen==='catDetail'||state.screen==='lessonDetail'))?'active':''}" onclick="nav('${i.id}')">
+      <span class="ic">${i.ic}</span>${i.l}
+    </button>`).join('')}
+  </div>`;
+}
+
+function ScreenHome(){
+  const lv = levelInfo(state.totalXP);
+  const score = independenceScore(state);
+  const nextLesson = ALL_LESSONS.find(l=>state.lessonStatus[l.id]==='available') || ALL_LESSONS[0];
+  const pending = state.pendingParentTasks.length;
+  return `
+  <div class="hello">
+    <div class="sub">Welcome back,</div>
+    <h1>${esc(state.teenName)} 👋</h1>
+  </div>
+  <div class="stat-row" style="margin-bottom:16px;">
+    <div class="stat-chip"><div class="n">Lv.${lv.level}</div><div class="l">${lv.title}</div></div>
+    <div class="stat-chip"><div class="n">${state.totalXP} XP</div><div class="l">Total</div></div>
+    <div class="stat-chip"><div class="n">🔥 ${state.streak}</div><div class="l">Day Streak</div></div>
+  </div>
+  <div class="card">
+    <div class="score-wrap">
+      <div class="ring" style="--pct:${score}"><div class="val">${score}<small>SCORE</small></div></div>
+      <div style="flex:1;">
+        <div style="font-weight:800;font-size:14px;margin-bottom:4px;">Independence Score</div>
+        <div style="font-size:12px;color:var(--ink-soft);line-height:1.4;">Rises as parent-verified skills are completed across all 16 categories.</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--ink-soft);margin-bottom:4px;"><span>Level ${lv.level}</span><span>${lv.into}/${lv.need} XP</span></div>
+      <div class="xpbar-track"><div class="xpbar-fill" style="width:${lv.into}%;"></div></div>
+    </div>
+  </div>
+  ${pending>0? `<div class="card" style="border-left:4px solid var(--amber);">
+    <div style="font-weight:800;font-size:13px;">⏳ ${pending} task${pending>1?'s':''} awaiting parent verification</div>
+    <div style="font-size:12px;color:var(--ink-soft);margin-top:3px;">Your parent needs to approve these in Parent Mode before you get XP.</div>
+  </div>`:''}
+  <div class="section-title">Continue Learning</div>
+  <div class="card" style="cursor:pointer;" onclick="openLesson('${nextLesson.id}')">
+    <div style="display:flex;gap:12px;align-items:center;">
+      <div style="font-size:28px;">${nextLesson.catIcon}</div>
+      <div style="flex:1;">
+        <div style="font-size:11px;color:var(--ink-soft);font-weight:700;text-transform:uppercase;">${esc(nextLesson.catName)}</div>
+        <div style="font-weight:800;font-size:14.5px;margin-top:2px;">${esc(nextLesson.title)}</div>
+      </div>
+      <div class="chev">›</div>
+    </div>
+  </div>
+  <div class="section-title">This Week's Missions</div>
+  ${state.activeMissions.map(m=>MissionCard(m)).join('')}
+  <div class="section-title">Coach Tip</div>
+  <div class="card">
+    <div style="font-size:13px;line-height:1.5;">${esc(suggestNext())}</div>
+    <button class="btn btn-outline" style="margin-top:12px;" onclick="nav('coach')">Ask Coach More →</button>
+  </div>
+  `;
+}
+
+function MissionCard(m){
+  const pct = Math.round((m.progress/m.target)*100);
+  return `<div class="mission-card">
+    <div class="top">
+      <div><div class="name">${esc(m.name)}</div><div class="desc">${esc(m.desc)}</div></div>
+      <div class="mission-xp">+${m.xp} XP</div>
+    </div>
+    <div class="ptrack" style="margin-top:10px;"><div class="pfill" style="width:${pct}%;background:var(--teal);"></div></div>
+    <div style="font-size:11px;color:var(--ink-soft);margin-top:4px;">${m.progress}/${m.target} complete</div>
+  </div>`;
+}
+
+function ScreenAcademy(){
+  const y1 = CATS.filter(c=>c.year===1);
+  const y2 = CATS.filter(c=>c.year===2);
+  return `
+  <h2 class="font-display" style="margin:2px 0 4px;">Life Skills Academy</h2>
+  <div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:6px;">16 categories · ${ALL_LESSONS.length} lessons · tap any to start</div>
+  <div class="section-title">Year 1 — Fundamentals</div>
+  <div class="cat-grid">${y1.map(CatCard).join('')}</div>
+  <div class="section-title">Year 2 — Independent Living</div>
+  <div class="cat-grid">${y2.map(CatCard).join('')}</div>
+  `;
+}
+function CatCard(c){
+  const p = catProgress(c);
+  return `<div class="cat-card" style="--cat-color:${c.color};" onclick="openCat('${c.id}')">
+    <div class="tag">Y${c.year}</div>
+    <div class="ic">${c.icon}</div>
+    <div class="name">${esc(c.name)}</div>
+    <div class="mini-track"><div class="mini-fill" style="width:${p.pct}%;--cat-color:${c.color};background:${c.color};"></div></div>
+    <div class="prog">${p.done}/${p.total} done</div>
+  </div>`;
+}
+
+function ScreenCatDetail(){
+  const c = CATS.find(x=>x.id===state.activeCat);
+  if(!c) return ScreenAcademy();
+  const p = catProgress(c);
+  return `
+  <button class="backbtn" onclick="nav('academy')">‹ Academy</button>
+  <div class="card" style="border-left:5px solid ${c.color};">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="font-size:30px;">${c.icon}</div>
+      <div>
+        <span class="pill-year">Year ${c.year}</span>
+        <h2 style="margin:2px 0;font-size:17px;">${esc(c.name)}</h2>
+      </div>
+    </div>
+    <div class="ptrack" style="margin-top:12px;"><div class="pfill" style="width:${p.pct}%;background:${c.color};"></div></div>
+    <div style="font-size:11px;color:var(--ink-soft);margin-top:5px;">${p.done}/${p.total} lessons completed · ${p.pct}% mastery</div>
+  </div>
+  <div class="section-title">Lessons</div>
+  <div class="card card-flush">
+    ${c.lessons.map(l=>LessonRow(l)).join('')}
+  </div>
+  `;
+}
+function LessonRow(l){
+  const st = state.lessonStatus[l.id];
+  const icon = st==='completed'?'✓':st==='pending'?'⏳':'○';
+  return `<div class="lesson-row" onclick="openLesson('${l.id}')">
+    <div class="lstatus ${st}">${icon}</div>
+    <div class="lt"><div class="t">${esc(l.title)}</div><div class="x">+${l.xp} XP ${st==='pending'?' · awaiting parent approval':''}</div></div>
+    <div class="chev">›</div>
+  </div>`;
+}
+
+function ScreenLessonDetail(){
+  const l = ALL_LESSONS.find(x=>x.id===state.activeLesson);
+  if(!l) return ScreenAcademy();
+  const c = CATS.find(x=>x.id===l.catId);
+  const st = state.lessonStatus[l.id];
+  const checked = state.checklistState[l.id] || [];
+  const allChecked = checked.length === l.checklist.length;
+  return `
+  <button class="backbtn" onclick="openCat('${l.catId}')">‹ ${esc(c.name)}</button>
+  <div class="lesson-hero">
+    <div class="k">${c.icon} ${esc(c.name)} · Year ${c.year}</div>
+    <h2>${esc(l.title)}</h2>
+    <div class="xp">+${l.xp} XP ${st==='completed'?' · ✓ Completed':st==='pending'?' · ⏳ Pending parent verification':''}</div>
+  </div>
+
+  <div class="card">
+    <div class="block-title">💡 Why It Matters</div>
+    <div style="font-size:13.5px;line-height:1.55;">${esc(l.why)}</div>
+  </div>
+
+  <div class="card">
+    <div class="block-title">📋 Step-by-Step</div>
+    <ul class="steps">${l.steps.map((s,i)=>`<li><span class="num">${i+1}</span><span>${esc(s)}</span></li>`).join('')}</ul>
+  </div>
+
+  <div class="card">
+    <div class="block-title">🔎 Real Example</div>
+    <div class="ex-box">${esc(l.example)}</div>
+  </div>
+
+  <div class="card">
+    <div class="block-title">✏️ Practice Exercise</div>
+    <div style="font-size:13.5px;line-height:1.5;">${esc(l.practice)}</div>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--coral);">
+    <div class="block-title" style="color:var(--coral);">🏆 Real-World Challenge</div>
+    <div style="font-size:13.5px;line-height:1.5;">${esc(l.challenge)}</div>
+  </div>
+
+  <div class="card">
+    <div class="block-title">✅ Completion Checklist</div>
+    ${l.checklist.map((item,i)=>`
+      <div class="chk-item ${checked.includes(i)?'done':''}" onclick="toggleChk('${l.id}',${i})">
+        <div class="chk-box ${checked.includes(i)?'done':''}">${checked.includes(i)?'✓':''}</div>
+        <div class="t">${esc(item)}</div>
+      </div>`).join('')}
+  </div>
+
+  ${st==='completed' ? `<div class="card" style="text-align:center;background:var(--navy);color:#fff;">✓ Skill mastered — nice work.</div>` :
+    st==='pending' ? `<div class="card" style="text-align:center;">⏳ Waiting on parent verification in Parent Mode.</div>` :
+    `<button class="btn btn-primary" ${allChecked?'':'disabled'} onclick="submitLesson('${l.id}')">
+      ${allChecked? 'Submit for Parent Verification' : 'Check off all items to submit ('+checked.length+'/'+l.checklist.length+')'}
+    </button>`}
+  `;
+}
+
+function ScreenMissions(){
+  return `
+  <h2 class="font-display" style="margin:2px 0 14px;">Missions & Streaks</h2>
+  <div class="card" style="background:var(--navy);color:#fff;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:12px;color:rgba(255,255,255,.65);">Current Streak</div>
+        <div style="font-size:26px;font-weight:800;font-family:'Sora',sans-serif;">🔥 ${state.streak} days</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:12px;color:rgba(255,255,255,.65);">Badges</div>
+        <div style="font-size:26px;font-weight:800;font-family:'Sora',sans-serif;">${state.badgesEarned.length}</div>
+      </div>
+    </div>
+  </div>
+  <div class="section-title">Active Weekly Missions</div>
+  ${state.activeMissions.map(m=>MissionCard(m)).join('')}
+  <div class="section-title">Badge Case</div>
+  <div class="badge-grid">
+    ${[...SPECIAL_BADGES.map(b=>({id:b.id,icon:b.icon,name:b.name})), ...CATS.map(c=>({id:'cat_'+c.id, icon:c.icon, name:c.name.split(' ')[0]+' Master'}))]
+      .map(b=>`<div class="badge-tile ${state.badgesEarned.includes(b.id)?'':'locked'}"><div>${b.icon}</div><div class="bn">${esc(b.name)}</div></div>`).join('')}
+  </div>
+  `;
+}
+
+function ScreenCoach(){
+  const quick = ['What should I learn next?', 'Help me with budgeting', "I'm nervous about moving", 'How do I do laundry?', "What's my Independence Score?"];
+  return `
+  <h2 class="font-display" style="margin:2px 0 10px;">Coach</h2>
+  <div id="chatScroll" class="chat-scroll" style="max-height:calc(100vh - 320px); overflow-y:auto;">
+    ${state.chat.map(m=>`<div class="bubble ${m.who}">${esc(m.text)}</div>`).join('')}
+  </div>
+  <div class="chip-row">${quick.map(q=>`<div class="chip" onclick="sendChat('${q.replace(/'/g,"\\'")}')">${esc(q)}</div>`).join('')}</div>
+  <div class="chatbar">
+    <input id="chatInput" type="text" placeholder="Ask Coach anything..." onkeydown="if(event.key==='Enter'){sendChat(this.value); this.value='';}" />
+    <button onclick="const i=document.getElementById('chatInput'); sendChat(i.value); i.value='';">➤</button>
+  </div>
+  `;
+}
+
+function ScreenProfile(){
+  const lv = levelInfo(state.totalXP);
+  const score = independenceScore(state);
+  const sorted = [...CATS].sort((a,b)=>catProgress(b).pct-catProgress(a).pct);
+  return `
+  <h2 class="font-display" style="margin:2px 0 14px;">Profile</h2>
+  <div class="card" style="text-align:center;">
+    <div style="width:72px;height:72px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;margin:0 auto 10px;font-family:'Sora',sans-serif;">${esc(state.teenName[0])}</div>
+    <div style="font-weight:800;font-size:17px;">${esc(state.teenName)}</div>
+    <div class="badge-pill" style="margin-top:8px;">Level ${lv.level} · ${lv.title}</div>
+  </div>
+  <div class="stat-row">
+    <div class="stat-chip" style="background:var(--card);border-color:var(--line);color:var(--ink);"><div class="n" style="color:var(--navy);">${score}%</div><div class="l">Independence</div></div>
+    <div class="stat-chip" style="background:var(--card);border-color:var(--line);color:var(--ink);"><div class="n" style="color:var(--navy);">${state.totalXP}</div><div class="l">Total XP</div></div>
+    <div class="stat-chip" style="background:var(--card);border-color:var(--line);color:var(--ink);"><div class="n" style="color:var(--navy);">${state.badgesEarned.length}</div><div class="l">Badges</div></div>
+  </div>
+  <div class="section-title">Mastery by Category</div>
+  <div class="card">
+    ${sorted.map(c=>{const p=catProgress(c); return `
+      <div class="pbar-row">
+        <div class="lbl"><span>${c.icon} ${esc(c.name)}</span><span>${p.pct}%</span></div>
+        <div class="ptrack"><div class="pfill" style="width:${p.pct}%;background:${c.color};"></div></div>
+      </div>`;}).join('')}
+  </div>
+  <div class="section-title">Two-Year Roadmap</div>
+  ${Roadmap()}
+  `;
+}
+
+function Roadmap(){
+  const items = [
+    {when:'Aug 2026 · Now', what:'Program Start — Fundamentals', detail:'Daily routines, hygiene, laundry, cooking basics, first budget, time management systems.', state:'now'},
+    {when:'Jan 2027', what:'Mid Year 1 Checkpoint', detail:'Independent routines running solo. Target: 40%+ Independence Score.', state:'future'},
+    {when:'Aug 2027', what:'Year 2 Begins — Independent Living', detail:'Travel, dorm life, healthcare, transit, safety, culture prep begin.', state:'future'},
+    {when:'Mar 2028', what:'Pre-Departure Readiness Review', detail:'Full skills audit with parents. Target: 80%+ Independence Score.', state:'future'},
+    {when:'Summer 2028', what:'Departure — 9th Grade in the US', detail:'Final packing, travel day walkthrough, airport navigation solo run.', state:'future'},
+  ];
+  return `<div class="card"><div class="timeline">
+    ${items.map(i=>`<div class="tl-item"><div class="tl-dot ${i.state}"></div><div class="when">${i.when}</div><div class="what">${i.what}</div><div class="detail">${i.detail}</div></div>`).join('')}
+  </div></div>`;
+}
+
+function ScreenParent(){
+  const score = independenceScore(state);
+  const sorted = [...CATS].sort((a,b)=>catProgress(b).pct-catProgress(a).pct);
+  const strengths = sorted.slice(0,3);
+  const gaps = [...sorted].reverse().slice(0,3);
+  const pending = state.pendingParentTasks.map(id=>ALL_LESSONS.find(l=>l.id===id)).filter(Boolean);
+  return `
+  <h2 class="font-display" style="margin:2px 0 4px;">Parent Dashboard</h2>
+  <div style="font-size:12px;color:var(--ink-soft);margin-bottom:14px;">Monitoring ${esc(state.teenName)}'s readiness journey</div>
+
+  <div class="card" style="background:var(--navy);color:#fff;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div><div style="font-size:12px;color:rgba(255,255,255,.65);">Independence Score</div><div style="font-size:30px;font-weight:800;font-family:'Sora',sans-serif;">${score}%</div></div>
+      <div style="text-align:right;"><div style="font-size:12px;color:rgba(255,255,255,.65);">Streak</div><div style="font-size:22px;font-weight:800;">🔥 ${state.streak}d</div></div>
+    </div>
+  </div>
+
+  <div class="section-title">⏳ Pending Verification (${pending.length})</div>
+  <div class="card">
+    ${pending.length===0? `<div class="empty">Nothing waiting — all caught up.</div>` :
+      pending.map(l=>`<div class="verify-row">
+        <div><div class="vt">${esc(l.title)}</div><div class="vs">${esc(l.catName)} · +${l.xp} XP</div></div>
+        <div class="vbtns">
+          <button class="iconbtn ok" onclick="parentApprove('${l.id}',true)">✓</button>
+          <button class="iconbtn no" onclick="parentApprove('${l.id}',false)">✕</button>
+        </div>
+      </div>`).join('')}
+  </div>
+
+  <div class="section-title">Strengths & Gaps</div>
+  <div class="card">
+    <div style="font-weight:800;font-size:12.5px;color:var(--teal);margin-bottom:6px;">TOP STRENGTHS</div>
+    ${strengths.map(c=>{const p=catProgress(c); return `<div class="pbar-row"><div class="lbl"><span>${c.icon} ${esc(c.name)}</span><span>${p.pct}%</span></div><div class="ptrack"><div class="pfill" style="width:${p.pct}%;background:var(--teal);"></div></div></div>`;}).join('')}
+    <div style="font-weight:800;font-size:12.5px;color:var(--coral);margin:14px 0 6px;">NEEDS ATTENTION</div>
+    ${gaps.map(c=>{const p=catProgress(c); return `<div class="pbar-row"><div class="lbl"><span>${c.icon} ${esc(c.name)}</span><span>${p.pct}%</span></div><div class="ptrack"><div class="pfill" style="width:${p.pct}%;background:var(--coral);"></div></div></div>`;}).join('')}
+  </div>
+
+  <div class="section-title">Assign a Challenge</div>
+  <div class="card">
+    <div class="formfield">
+      <label>Category</label>
+      <select id="assignCat">${CATS.map(c=>`<option value="${c.id}">${c.icon} ${esc(c.name)}</option>`).join('')}</select>
+    </div>
+    <div class="formfield">
+      <label>Note (optional)</label>
+      <textarea id="assignNote" rows="2" placeholder="e.g. Do this before Saturday"></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="const cat=document.getElementById('assignCat').value; const note=document.getElementById('assignNote').value; assignChallenge(cat,null,note);">Assign Challenge</button>
+  </div>
+
+  <div class="section-title">Milestones</div>
+  <div class="card">
+    ${state.milestones.map(m=>`
+      <div class="chk-item ${m.done?'done':''}" onclick="toggleMilestone('${m.id}')">
+        <div class="chk-box ${m.done?'done':''}">${m.done?'✓':''}</div>
+        <div class="t">${esc(m.title)} <span style="color:var(--ink-soft);font-weight:600;">— target ${m.date}</span></div>
+      </div>`).join('')}
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <input id="msTitle" placeholder="New milestone..." style="flex:1;border:1.5px solid var(--line);border-radius:8px;padding:9px 11px;font-size:12.5px;font-family:inherit;">
+      <input id="msDate" type="date" style="border:1.5px solid var(--line);border-radius:8px;padding:9px 11px;font-size:12.5px;font-family:inherit;">
+      <button class="btn btn-primary btn-sm" onclick="const t=document.getElementById('msTitle'); const d=document.getElementById('msDate'); if(t.value){addMilestone(t.value, d.value||'TBD'); t.value='';}">Add</button>
+    </div>
+  </div>
+
+  <div class="section-title">Full Category Overview</div>
+  <div class="card">
+    ${CATS.map(c=>{const p=catProgress(c); return `<div class="pbar-row"><div class="lbl"><span>${c.icon} ${esc(c.name)} <span style="color:var(--ink-soft);font-weight:600;">(Y${c.year})</span></span><span>${p.done}/${p.total}</span></div><div class="ptrack"><div class="pfill" style="width:${p.pct}%;background:${c.color};"></div></div></div>`;}).join('')}
+  </div>
+  `;
+}
+
+/* ============ MAIN RENDER ============ */
+function render(){
+  let body;
+  if(state.parentMode){
+    body = ScreenParent();
+  } else {
+    switch(state.screen){
+      case 'home': body = ScreenHome(); break;
+      case 'academy': body = ScreenAcademy(); break;
+      case 'catDetail': body = ScreenCatDetail(); break;
+      case 'lessonDetail': body = ScreenLessonDetail(); break;
+      case 'missions': body = ScreenMissions(); break;
+      case 'coach': body = ScreenCoach(); break;
+      case 'profile': body = ScreenProfile(); break;
+      default: body = ScreenHome();
+    }
+  }
+  document.getElementById('root').innerHTML = `
+    <div class="app-shell">
+      ${TopBar()}
+      <div class="screen">${body}</div>
+      ${BottomNav()}
+      ${state.toast? `<div class="toast">${esc(state.toast)}</div>` : ''}
+    </div>
+  `;
+  if(state.screen==='coach'){ const sc=document.getElementById('chatScroll'); if(sc) sc.scrollTop = sc.scrollHeight; }
+}
+render();
+</script>
+</body>
+</html>
