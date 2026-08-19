@@ -2,8 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <title>Ready for Independence</title>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="RFI" />
+<meta name="format-detection" content="telephone=no,date=no,address=no,email=no" />
+<meta name="theme-color" content="#0B1F3A" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230B1F3A'/%3E%3Ctext x='50' y='66' font-size='54' text-anchor='middle'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -29,31 +36,37 @@
   --r-lg:22px;
   --shadow:0 1px 2px rgba(16,24,40,.04), 0 6px 18px rgba(16,24,40,.06);
 }
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;overscroll-behavior:none;}
 body{
   font-family:'Manrope',system-ui,-apple-system,sans-serif;
   background:var(--navy);
   color:var(--ink);
   -webkit-font-smoothing:antialiased;
-  overscroll-behavior:none;
+  position:fixed;
+  inset:0;
+  width:100%;
 }
+#root{height:100%;}
 h1,h2,h3,h4,.font-display{font-family:'Sora',system-ui,sans-serif;}
 button{font-family:inherit;}
 .app-shell{
   max-width:460px;
   margin:0 auto;
-  min-height:100vh;
+  height:100%;
   background:var(--paper);
   position:relative;
   display:flex;
   flex-direction:column;
   box-shadow:0 0 60px rgba(0,0,0,.35);
+  overflow:hidden;
 }
 .screen{
   flex:1;
   padding:18px 16px 96px;
   overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
 }
 .topbar{
   position:sticky;
@@ -61,11 +74,12 @@ button{font-family:inherit;}
   z-index:20;
   background:var(--navy);
   color:#fff;
-  padding:14px 16px 16px;
+  padding:calc(14px + env(safe-area-inset-top)) 16px 16px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   border-bottom:3px solid var(--amber);
+  flex-shrink:0;
 }
 .topbar .brand{
   display:flex;
@@ -104,6 +118,24 @@ button{font-family:inherit;}
   justify-content:space-around;
   padding:8px 4px calc(8px + env(safe-area-inset-bottom));
   border-top:1px solid rgba(255,255,255,.08);
+  flex-shrink:0;
+}
+.install-tip{
+  background:var(--amber);
+  color:#fff;
+  font-size:11.5px;
+  font-weight:700;
+  text-align:center;
+  padding:8px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  flex-shrink:0;
+}
+.install-tip button{
+  background:rgba(255,255,255,.25);
+  border:none;color:#fff;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:800;cursor:pointer;
 }
 .navbtn{
   background:none;border:none;color:rgba(255,255,255,.55);
@@ -137,9 +169,15 @@ button{font-family:inherit;}
 .section-title:first-child{margin-top:0;}
 
 /* Home header */
+.hero-banner{
+  background:linear-gradient(160deg,var(--navy),var(--navy-2));
+  border-radius:var(--r-lg);
+  padding:18px 16px 16px;
+  margin-bottom:16px;
+}
 .hello{color:#fff;margin-bottom:14px;}
 .hello h1{font-size:21px;margin:2px 0 2px;color:#fff;}
-.hello .sub{font-size:13px;color:rgba(255,255,255,.65);}
+.hello .sub{font-size:13px;color:rgba(255,255,255,.78);}
 
 .stat-row{display:flex;gap:10px;margin-bottom:4px;}
 .stat-chip{
@@ -151,7 +189,7 @@ button{font-family:inherit;}
   color:#fff;
 }
 .stat-chip .n{font-family:'Sora',sans-serif;font-weight:800;font-size:17px;}
-.stat-chip .l{font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.4px;}
+.stat-chip .l{font-size:10px;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.4px;}
 
 /* Score ring */
 .score-wrap{display:flex;align-items:center;gap:16px;}
@@ -650,6 +688,54 @@ let state = {
 };
 ALL_LESSONS.forEach(l => state.lessonStatus[l.id] = 'available');
 
+/* ============ PERSISTENCE (on-device only, this device's browser storage) ============ */
+const STORAGE_KEY = 'rfi_state_v1';
+function saveState(){
+  try{
+    const copy = Object.assign({}, state, {toast:null});
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(copy));
+  }catch(e){ /* storage unavailable (e.g. private browsing) — app still works, just won't persist */ }
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const saved = JSON.parse(raw);
+      state = Object.assign(state, saved);
+    }
+  }catch(e){}
+}
+function resetProgress(){
+  if(confirm('Reset all progress, XP, badges and streaks? This cannot be undone.')){
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    location.reload();
+  }
+}
+function setTeenName(name){
+  state.teenName = name;
+  showToast('Profile name updated to '+name);
+}
+loadState();
+
+/* ============ iOS INSTALL HINT ============ */
+function isIOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
+function isStandalone(){ return window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches; }
+function isFileProtocol(){ return location.protocol === 'file:'; }
+let installTipDismissed = false;
+try{ installTipDismissed = localStorage.getItem('rfi_install_tip_dismissed') === '1'; }catch(e){}
+function dismissInstallTip(){
+  installTipDismissed = true;
+  try{ localStorage.setItem('rfi_install_tip_dismissed','1'); }catch(e){}
+  render();
+}
+function InstallTip(){
+  if(installTipDismissed || isStandalone()) return '';
+  if(isIOS()){
+    return `<div class="install-tip">📲 For the full app experience: tap the Share icon, then <b>&nbsp;Add to Home Screen&nbsp;</b><button onclick="dismissInstallTip()">Got it</button></div>`;
+  }
+  return `<div class="install-tip">📲 Tap your browser menu → <b>&nbsp;Add to Home Screen&nbsp;</b> for the full app experience<button onclick="dismissInstallTip()">Got it</button></div>`;
+}
+
 function independenceScore(s){
   const total = ALL_LESSONS.length;
   const done = Object.values(s.lessonStatus).filter(v=>v==='completed').length;
@@ -795,14 +881,16 @@ function ScreenHome(){
   const nextLesson = ALL_LESSONS.find(l=>state.lessonStatus[l.id]==='available') || ALL_LESSONS[0];
   const pending = state.pendingParentTasks.length;
   return `
-  <div class="hello">
-    <div class="sub">Welcome back,</div>
-    <h1>${esc(state.teenName)} 👋</h1>
-  </div>
-  <div class="stat-row" style="margin-bottom:16px;">
-    <div class="stat-chip"><div class="n">Lv.${lv.level}</div><div class="l">${lv.title}</div></div>
-    <div class="stat-chip"><div class="n">${state.totalXP} XP</div><div class="l">Total</div></div>
-    <div class="stat-chip"><div class="n">🔥 ${state.streak}</div><div class="l">Day Streak</div></div>
+  <div class="hero-banner">
+    <div class="hello">
+      <div class="sub">Welcome back,</div>
+      <h1>${esc(state.teenName)} 👋</h1>
+    </div>
+    <div class="stat-row">
+      <div class="stat-chip"><div class="n">Lv.${lv.level}</div><div class="l">${lv.title}</div></div>
+      <div class="stat-chip"><div class="n">${state.totalXP} XP</div><div class="l">Total</div></div>
+      <div class="stat-chip"><div class="n">🔥 ${state.streak}</div><div class="l">Day Streak</div></div>
+    </div>
   </div>
   <div class="card">
     <div class="score-wrap">
@@ -1033,6 +1121,16 @@ function ScreenProfile(){
   </div>
   <div class="section-title">Two-Year Roadmap</div>
   ${Roadmap()}
+  <div class="section-title">Settings</div>
+  <div class="card">
+    <div class="formfield">
+      <label>Profile Name</label>
+      <input id="nameInput" type="text" value="${esc(state.teenName)}" placeholder="Enter name" />
+    </div>
+    <button class="btn btn-outline" onclick="const i=document.getElementById('nameInput'); if(i.value.trim()){ setTeenName(i.value.trim()); }">Save Name</button>
+    <div style="font-size:11px;color:var(--ink-soft);margin-top:8px;line-height:1.4;">Switching this app to a different kid? Change the name here, then use Reset All Progress below for a clean slate — otherwise XP, badges, and streak carry over.</div>
+  </div>
+  <button class="btn btn-danger-o" onclick="resetProgress()">Reset All Progress</button>
   `;
 }
 
@@ -1140,12 +1238,14 @@ function render(){
   document.getElementById('root').innerHTML = `
     <div class="app-shell">
       ${TopBar()}
+      ${InstallTip()}
       <div class="screen">${body}</div>
       ${BottomNav()}
       ${state.toast? `<div class="toast">${esc(state.toast)}</div>` : ''}
     </div>
   `;
   if(state.screen==='coach'){ const sc=document.getElementById('chatScroll'); if(sc) sc.scrollTop = sc.scrollHeight; }
+  saveState();
 }
 render();
 </script>
